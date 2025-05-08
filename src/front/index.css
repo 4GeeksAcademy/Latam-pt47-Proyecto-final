@@ -1,3 +1,35 @@
+.navbar {
+    background-color: white; 
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 30px;
+    border-bottom: 2px solid #ddd;
+}   
+
+.navbar-logo img {
+    height: 60px; 
+}
+
+.navbar-links {
+    display: flex;
+    gap: 20px; 
+}
+
+.navbar-links a {
+    text-decoration: none;
+    color: #333;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.navbar-links a:hover {
+    color: #007bff; 
+}
+
+
+
+
 .header-section {
     background-color: #007bff; 
     text-align: center;
@@ -13,4 +45,35 @@
 .header-section p {
     font-size: 1.2rem;
     color: white;
+}
+
+.footer {
+    background-color: #007bff; 
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+}
+
+.footer-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.2rem;
+}
+
+.footer a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.footer a:hover {
+    text-decoration: underline;
 }
