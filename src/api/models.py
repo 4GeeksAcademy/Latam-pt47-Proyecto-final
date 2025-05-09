@@ -32,12 +32,25 @@ class User(db.Model):
     likes: Mapped[list['Likes']] = relationship(back_populates ='user', cascade='all, delete-orphan', lazy ='joined')
     reports: Mapped[list['Reports']] = relationship(back_populates ='user', cascade='all, delete-orphan', lazy ='joined')
 
+    def __repr__(self):
+        return f'usuario{self.id}: {self.username}'
+   
+    def serialize(self):
+        return{
+            'id': self.id,
+            "username": self.username,
+            "name": self.name,
+            "phone": self.phone,
+            "email": self.email
+        }
+
 
 class Incidentes(db.Model):
     __tablename__= 'incidentes'
     id: Mapped[int] = mapped_column(primary_key= True)
     image: Mapped[str] = mapped_column(String(), nullable = False)
-    address : Mapped[str] = mapped_column(String(), nullable = False)
+    longitud: Mapped[str] = mapped_column(String(), nullable = False)
+    latitud: Mapped[str] = mapped_column(String(), nullable = False)
     type: Mapped[TipoIncidente]   = mapped_column(Enum(TipoIncidente), nullable = False)
     description: Mapped[str] = mapped_column(String(), nullable = False)
     user_id: Mapped[int] = mapped_column(ForeignKey('user.id'))

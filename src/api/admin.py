@@ -16,7 +16,7 @@ class UserModelView(ModelView):
 class IncidentesModelView(ModelView):
     column_auto_select_related = True  # Carga automáticamente las relaciones
     # Columnas y relationships de mi tabla PeopleFavorites
-    column_list = ['id', 'image', 'address', 'type', 'description', 'user_id', 'user', 'likes', 'reports']
+    column_list = ['id', 'image', 'longitud', 'latitud', 'type', 'description', 'user_id', 'user', 'likes', 'reports']
 
 class LikesModelView(ModelView):
     column_auto_select_related = True  # Carga automáticamente las relaciones
