@@ -41,7 +41,7 @@ export const Terminosycondiciones = () => {
         },
         {
             titulo: "10. Contacto",
-            descripcion: "Para consultas, denuncias de uso indebido o reportes técnicos, puedes escribirnos a nuestro correo electrónico:"
+            descripcion: "Para consultas, denuncias de uso indebido o reportes técnicos, puedes escribirnos a nuestro correo electrónico: contacto@guardianurbano.com "
         }
     ];
 
@@ -57,15 +57,11 @@ export const Terminosycondiciones = () => {
                     <p>Bienvenido a <strong>Guardian Urbano</strong>, una plataforma comunitaria cuyo objetivo es compartir alertas, reportes ciudadanos e imágenes sobre hechos delictivos ocurridos en zonas urbanas. Al acceder y usar este sitio web, aceptas los siguientes Términos y Condiciones. Si no estás de acuerdo con alguno de ellos, por favor no utilices la plataforma.</p>
 
                     {terminos.map((termino, index) => (
-                        <section key={index} className="termino-section">
-                            <h2>{termino.titulo}</h2>
+                        <article key={index} className="termino-section">
+                            <h2 aria-label={`Sección ${termino.titulo}`}>{termino.titulo}</h2>
                             <p>{termino.descripcion}</p>
-                        </section>
+                        </article>
                     ))}
-
-                    <div>
-                        <p><a href="mailto:contacto@guardianurbano.com">contacto@guardianurbano.com</a></p>
-                    </div>
                 </section>
             </div>
         </div>

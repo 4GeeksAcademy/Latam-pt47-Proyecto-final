@@ -14,7 +14,7 @@ export const Navbar = () => {
                 <Link to="/">Home</Link>
                 <Link to="/login">Login</Link>
                 <Link to="/signup">Registro</Link>
-                <Link to="/subir-pin">Subir Pin</Link>
+                <Link to="/subirpin">Subir Pin</Link>
                 <Link to="/terminos">Términos y Condiciones</Link>
             </div>
         </nav>
