@@ -28,10 +28,14 @@
 }
 
 
-
-
 .header-section {
     background-color: #007bff; 
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.terminos {
+    background-color: #0b0b0b; 
     text-align: center;
     padding: 40px 20px;
 }
