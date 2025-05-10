@@ -60,9 +60,9 @@ export const Login = () => {
             />
           </div>
           <div class="d-grid gap-2">
-          <button type="sumit" className="btn btn-primary btn-block">
-            Iniciar Sesión
-          </button>
+            <button type="sumit" className="btn btn-primary btn-block">
+              Iniciar Sesión
+            </button>
           </div>
         </form>
         <p className="text-center mt-3">

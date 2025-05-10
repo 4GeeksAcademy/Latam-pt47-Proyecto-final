@@ -81,3 +81,48 @@
 .footer a:hover {
     text-decoration: underline;
 }
+
+.subir-pin-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.mapa-container {
+    width: 50%;
+}
+
+.mapa-img {
+    width: 100%;
+    height: auto;
+}
+
+.form-container {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.textarea-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; 
+}
+
+textarea {
+    width: 100%;  
+    min-height: 120px; 
+    resize: vertical; 
+}
+.input-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; 
+}
