@@ -27,7 +27,6 @@ export const Signup = () => {
         setError("");
         setLoading(true);
 
-        // Validation
         if (formData.password !== formData.confirmPassword) {
             setError("Las contraseñas no coinciden");
             setLoading(false);
@@ -53,11 +52,9 @@ export const Signup = () => {
             const data = await response.json();
             
             if (response.ok) {
-                // Registration successful
                 alert(data.msg || "Usuario registrado exitosamente");
                 navigate("/login");
             } else {
-                // Registration failed
                 setError(data.msg || "Error al registrarse");
             }
         } catch (error) {

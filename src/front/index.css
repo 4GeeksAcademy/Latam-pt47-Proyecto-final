@@ -77,3 +77,28 @@
 .footer a:hover {
     text-decoration: underline;
 }
+
+.user-greeting {
+    color: #007bff;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.navbar-links .btn {
+    padding: 5px 15px;
+    font-weight: bold;
+    border-radius: 5px;
+}
+
+.navbar-links .btn-outline-danger {
+    color: #dc3545;
+    border-color: #dc3545;
+    background: transparent;
+    transition: all 0.3s ease;
+}
+
+.navbar-links .btn-outline-danger:hover {
+    color: white;
+    background-color: #dc3545;
+    cursor: pointer;
+}
