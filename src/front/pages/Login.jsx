@@ -37,10 +37,32 @@ export const Login = () => {
       const data = await response.json();
       
       if (response.ok) {
-        // Store token and user data in session storage
+        // Guardar el token en sessionStorage
         sessionStorage.setItem("token", data.token);
-        if (data.user) {
-          sessionStorage.setItem("user", JSON.stringify(data.user));
+        
+        // Obtener información del usuario usando el token
+        try {
+          const userResponse = await fetch(`${backendUrl}/private`, {
+            method: "GET",
+            headers: { 
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${data.token}`
+            }
+          });
+          
+          if (userResponse.ok) {
+            const userData = await userResponse.json();
+            // Guardar datos del usuario en sessionStorage
+            sessionStorage.setItem("user", JSON.stringify({
+              email: formData.email,
+              // Podemos almacenar más datos si están disponibles en la respuesta
+              ...userData
+            }));
+          }
+        } catch (userError) {
+          console.error("Error al obtener datos del usuario:", userError);
+          // Aún si falla, guardamos al menos el email que conocemos
+          sessionStorage.setItem("user", JSON.stringify({ email: formData.email }));
         }
         
         // Alert success and navigate to home page
@@ -99,7 +121,7 @@ export const Login = () => {
                     className="btn btn-primary"
                     disabled={loading}
                   >
-                    {loading ? "Iniciando sesión..." : "Button"}
+                    {loading ? "Iniciando sesión..." : "Iniciar Sesión"}
                   </button>
                 </div>
               </form>
