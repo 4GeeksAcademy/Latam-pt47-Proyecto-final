@@ -1,6 +1,7 @@
 export const initialStore=()=>{
   return{
     message: null,
+    user: null, // Añadimos el estado del usuario
     todos: [
       {
         id: 1,
@@ -25,13 +26,25 @@ export default function storeReducer(store, action = {}) {
       };
       
     case 'add_task':
-
-      const { id,  color } = action.payload
-
+      const { id, color } = action.payload
       return {
         ...store,
         todos: store.todos.map((todo) => (todo.id === id ? { ...todo, background: color } : todo))
       };
+
+    // Nuevos casos para manejar la autenticación
+    case 'set_user':
+      return {
+        ...store,
+        user: action.payload
+      };
+      
+    case 'logout':
+      return {
+        ...store,
+        user: null
+      };
+      
     default:
       throw Error('Unknown action.');
   }    
