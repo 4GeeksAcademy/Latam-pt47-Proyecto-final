@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-const SubirPin = () => {
+export const SubirPin = () => {
     const [titulo, setTitulo] = useState("");
     const [descripcion, setDescripcion] = useState("");
     const [tipo, setTipo] = useState("");
@@ -98,4 +98,3 @@ const SubirPin = () => {
     );
 };
 
-export default SubirPin;

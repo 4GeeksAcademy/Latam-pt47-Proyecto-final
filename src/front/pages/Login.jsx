@@ -126,7 +126,7 @@ export const Login = () => {
                 </div>
               </form>
               <div className="text-center mt-3">
-                <p>Privacy Policy | Terms of Service</p>
+                <p><Link to="/terminos">Terminos y Condiciones</Link></p>
               </div>
             </div>
           </div>
