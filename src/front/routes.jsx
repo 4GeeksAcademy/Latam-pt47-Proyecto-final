@@ -12,7 +12,7 @@ import { Demo } from "./pages/Demo";
 import { Signup } from "./pages/Signup";
 import { Login } from "./pages/Login";
 import { Terminosycondiciones } from "./pages/Terminosycondiciones";
-import SubirPin from "./pages/SubirPin";
+import {SubirPin} from "./pages/SubirPin";
 
 export const router = createBrowserRouter(
     createRoutesFromElements(
