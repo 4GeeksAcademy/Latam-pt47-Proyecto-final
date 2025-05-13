@@ -217,6 +217,29 @@ def subirpin():
         db.session.rollback()
         return jsonify({'msg':f'error al registrar incidente:{str(e)}'}),500
     
+@app.route('/ban-user/<int:user_id>', methods = ['PUT'])
+@jwt_required()
+def ban_user(user_id):
+    user = User.query.get(user_id)
+    admin_email = get_jwt_identity()
+    admin = User.query.filter_by(email = admin_email).first()
+    if user.id == admin.id:
+        return jsonify({'msg': 'No puedes banearte a ti mismo.'}), 400
+    
+    user.is_active = False
+
+    try:
+        db.session.commit()
+        return jsonify({
+            'msg': f'Usuario {user.username} baneado exitosamente',
+            'user': user.serialize()
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'msg': f'Error al banear usuario: {str(e)}'}), 500
+
+
+
 
 
 # this only runs if `$ python src/main.py` is executed
