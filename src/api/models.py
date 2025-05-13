@@ -58,6 +58,18 @@ class Incidentes(db.Model):
     likes: Mapped[list['Likes']] = relationship(back_populates = 'incident',cascade='all, delete-orphan', lazy = 'joined')
     reports: Mapped[list['Reports']] = relationship(back_populates = 'incident',cascade='all, delete-orphan', lazy = 'joined')
 
+    def serialize(self):
+        return{
+            'id': self.id,
+            "image": self.image,
+            "longitud": self.longitud,
+            "latitud": self.latitud,
+            "type": self.type,
+            "description": self.description,
+            "user_id": self.user_id
+        }
+
+
 class Likes(db.Model):
     __tablename__= 'likes'
     id: Mapped[int] = mapped_column(primary_key = True)
