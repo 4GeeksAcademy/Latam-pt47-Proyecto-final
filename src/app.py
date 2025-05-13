@@ -6,7 +6,7 @@ from flask import Flask, request, jsonify, url_for, send_from_directory
 from flask_migrate import Migrate
 from flask_swagger import swagger
 from api.utils import APIException, generate_sitemap
-from api.models import db, User
+from api.models import db, User, Incidentes
 from api.routes import api
 from api.admin import setup_admin
 from api.commands import setup_commands
@@ -182,6 +182,41 @@ def admin_users():
     # Obtener lista de usuarios
     users = User.query.all()
     return jsonify({'users': [user.serialize() for user in users]})
+
+@app.route('/subir-pin', methods = ['POST'])
+def subirpin():
+    body = request.get_json(silent = True)
+    if body is None:
+        return jsonify({'msg':'Debes enviar la informacion en el body'}), 400
+    if 'longitud' not in body:
+        return jsonify({'msg':'El campo longitud es obligatorio'}), 400
+    if 'latitud' not in body:
+        return jsonify({'msg':'El campo latitud es obligatorio'}), 400
+    if 'type' not in body:
+        return jsonify({'msg':'El campo type es obligatorio'}), 400
+    if 'description' not in body:
+        return jsonify({'msg':'El campo description es obligatorio'}), 400
+    
+    new_incident = Incidentes(
+        image = body['image'],
+        longitud = body['longitud'],
+        latitud = body['latitud'],
+        type = body['type'],
+        description = body['description'],
+        user_id = body['user_id']
+    )
+
+    db.session.add(new_incident)
+    try:
+        db.session.commit()
+        return jsonify({
+            'msg': 'Incidente registrado exitosamente',
+            'incidente': new_incident.serialize()
+        }), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'msg':f'error al registrar incidente:{str(e)}'}),500
+    
 
 
 # this only runs if `$ python src/main.py` is executed
