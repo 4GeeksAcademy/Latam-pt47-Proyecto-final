@@ -1,73 +1,139 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    email: "",
+    password: ""
+  });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    const backendUrl = import.meta.env.VITE_BACKEND_URL; // URL del backend
+    setError("");
+    setLoading(true);
+
     try {
-      const response = await fetch(backendUrl + "login", {
+      const backendUrl = import.meta.env.VITE_BACKEND_URL;
+      const response = await fetch(`${backendUrl}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ 
+          email: formData.email, 
+          password: formData.password 
+        }),
       });
+      
       const data = await response.json();
+      
       if (response.ok) {
+        // Guardar el token en sessionStorage
         sessionStorage.setItem("token", data.token);
-        sessionStorage.setItem("user", JSON.stringify(data.user));
+        
+        // Obtener información del usuario usando el token
+        try {
+          const userResponse = await fetch(`${backendUrl}/private`, {
+            method: "GET",
+            headers: { 
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${data.token}`
+            }
+          });
+          
+          if (userResponse.ok) {
+            const userData = await userResponse.json();
+            // Guardar datos del usuario en sessionStorage
+            sessionStorage.setItem("user", JSON.stringify({
+              email: formData.email,
+              // Podemos almacenar más datos si están disponibles en la respuesta
+              ...userData
+            }));
+          }
+        } catch (userError) {
+          console.error("Error al obtener datos del usuario:", userError);
+          // Aún si falla, guardamos al menos el email que conocemos
+          sessionStorage.setItem("user", JSON.stringify({ email: formData.email }));
+        }
+        
+        // Alert success and navigate to home page
         alert(data.msg || "Inicio de sesión exitoso");
-        window.location.href = "/";
+        navigate("/");
       } else {
-        alert(data.msg || "Credenciales incorrectas");
+        setError(data.msg || "Credenciales incorrectas");
       }
     } catch (error) {
+      setError("Error en la conexión con el servidor");
       console.error("Error:", error);
-      alert("Hubo un problema al conectar con el servidor.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="login-page">
-      <div className="container">
-        <div className="header-section text-center py-4">
-          <h1 className="text-white">Login</h1>
-          <p className="text-white">Inicia sesión o crea una cuenta en GuardianUrbano</p>
+    <div className="container">
+      <div className="header-section">
+        <h1>Login</h1>
+        <p>Inicia sesión o crea una cuenta en GuardianUrbano</p>
+      </div>
+      <div className="row justify-content-center">
+        <div className="col-md-6">
+          <div className="card my-4">
+            <div className="card-body">
+              {error && <div className="alert alert-danger">{error}</div>}
+              <form onSubmit={handleLogin}>
+                <div className="mb-3">
+                  <label htmlFor="email" className="form-label">Correo electrónico</label>
+                  <input
+                    type="email"
+                    className="form-control"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="password" className="form-label">Contraseña</label>
+                  <input
+                    type="password"
+                    className="form-control"
+                    id="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div className="d-grid">
+                  <button 
+                    type="submit" 
+                    className="btn btn-primary"
+                    disabled={loading}
+                  >
+                    {loading ? "Iniciando sesión..." : "Iniciar Sesión"}
+                  </button>
+                </div>
+              </form>
+              <div className="text-center mt-3">
+                <p><Link to="/terminos">Terminos y Condiciones</Link></p>
+              </div>
+            </div>
+          </div>
+          <div className="text-center mb-4">
+            <p>¿No tienes una cuenta? <Link to="/signup">Registro</Link></p>
+          </div>
         </div>
-        <form onSubmit={handleLogin}>
-          <div className="form-group">
-            <label htmlFor="email">Correo electrónico:</label>
-            <input
-              type="email"
-              className="form-control"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="password">Contraseña:</label>
-            <input
-              type="password"
-              className="form-control"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-          <div class="d-grid gap-2">
-          <button type="sumit" className="btn btn-primary btn-block">
-            Iniciar Sesión
-          </button>
-          </div>
-        </form>
-        <p className="text-center mt-3">
-          Si ya estás registrado, ir a <Link to="/signup">Registro</Link>
-        </p>
       </div>
     </div>
   );
