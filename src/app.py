@@ -166,7 +166,7 @@ def private():
     print(current_user)
     return jsonify({'msg': 'Si tienes un token valido y accediste a la pagina privada'})
 
-@app.route('/admin', methods=['GET'])
+@app.route('/api/admin', methods=['GET'])
 @jwt_required()
 def admin_reported_incidents():
     current_user_email = get_jwt_identity()
@@ -224,7 +224,7 @@ def admin_reported_incidents():
         'count': len(reported_incidents)
     })
 
-@app.route('/subir-pin', methods = ['POST'])
+@app.route('/api/subir-pin', methods = ['POST'])
 def subirpin():
     body = request.get_json(silent = True)
     if body is None:
@@ -258,7 +258,7 @@ def subirpin():
         db.session.rollback()
         return jsonify({'msg':f'error al registrar incidente:{str(e)}'}),500
     
-@app.route('/ban-user/<int:user_id>', methods = ['PUT'])
+@app.route('/api/ban-user/<int:user_id>', methods = ['PUT'])
 @jwt_required()
 def ban_user(user_id):
     user = User.query.get(user_id)
@@ -280,7 +280,7 @@ def ban_user(user_id):
         return jsonify({'msg': f'Error al banear usuario: {str(e)}'}), 500
 
 
-@app.route('/delete-incident/<int:incident_id>', methods=['DELETE'])
+@app.route('/api/delete-incident/<int:incident_id>', methods=['DELETE'])
 @jwt_required()
 def delete_incident(incident_id):
     incident = Incidentes.query.get(incident_id)
@@ -298,6 +298,28 @@ def delete_incident(incident_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'msg': f'Error al eliminar incidente: {str(e)}'}), 500
+
+@app.route('/api/all-incidents', methods=['GET'])
+def all_incidentes():
+    incidents_query = Incidentes.query.all()    
+
+    response_body = {
+        "msg": "Success",
+        "results": list(map(lambda incident: incident.serialize(), incidents_query)),
+    }
+    return jsonify(response_body),200
+
+@app.route('/api/incidents/<string:type>',methods=['GET'])
+def get_incidents_by_type(type):
+    incidents_query = Incidentes.query.filter_by(type=type).all()
+    if not incidents_query:
+        return jsonify({'msg': f'No se encontraron incidentes del tipo "{type}"'}),404
+    
+    response_body = {
+        'msg': 'Success',
+        'results': list(map(lambda incident: incident.serialize(), incidents_query))
+    }
+    return jsonify(response_body),200
 
 
 
