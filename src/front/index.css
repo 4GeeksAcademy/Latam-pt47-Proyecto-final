@@ -83,6 +83,199 @@
 }
 
 
+
+.Jumbotron {
+    
+
+      background-image: url("https://images.unsplash.com/photo-1467803738586-46b7eb7b16a1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1332&q=80");
+      background-size: cover;        /* Scales image to cover the div */
+      background-position: center;   /* Centers the image */
+      background-repeat: no-repeat;  /* Prevents repeating */
+      width: 100%;
+      height: 630px;
+
+}
+
+.Titulo {
+    size:58px;
+    color: white;
+}
+
+.texto_principal {
+    size:14px;
+    color: white !important;
+}
+
+
+
+.centrar_imagen {
+     display: flex !important;
+    justify-content: center !important;
+}
+
+.center-mainbox {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+}
+
+.boton_jumbotron{
+    display:inline-block !important;
+    padding: 10px 10px 10px 10px;
+    background-color: #064a87;
+    color:white;
+    border: none;
+}
+
+.fullfit {
+    height: 100%;
+}
+
+
+.mapsection {
+     display: flex;               /* establish flex context */
+  justify-content: center;     /* center horizontally */
+  align-items: center;         /* center vertically */
+  
+  /* just for demo purposes: */
+  width: 100%;
+  height: 800px;               /* fill viewport height */
+  background: #f0f0f0;
+}
+.incidentcard-height {
+    max-height: 300px;
+    background-color: #064a87;
+    border-radius: 10px;
+    padding-bottom: 8px;
+    padding-top: 10px;
+    margin-bottom: 15px;
+    color:white;
+}
+
+.place_holder_map {
+    width: 100%;
+    height: 100%;
+}
+
+.upvotes-downvotes {
+    display:flex
+}
+
+.Incident-cards {
+    height: 270px;
+}
+
+.Incident-button {
+      all: unset;
+      padding-right: 15px;
+}
+
+.Card_Section{
+    height:1400px;
+    background-color: #212121;
+    display:flex;
+    justify-content: center;
+}
+.Card_Center {
+    height: 100%;
+    width: 76%;
+    
+
+}
+
+.Title_Cards {
+    color: white; 
+    font-size:50px; 
+
+
+}
+
+.SubTitle_Cards {
+    color: #0166ff;
+    font-size: 18px;
+}
+
+.card-section{
+    background-color:#064a87;
+    height: 95%;
+    margin: 10px 10px 10px 10px;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.fullheightcard {
+    height:90%
+}
+
+.card-textbody {
+    color:white
+}
+
+.card-titlebody {
+    color:white
+}
+
+.card-bodycenter {
+    width: 76%;
+    height:55%;
+
+}
+
+.cardimage1 {
+    background-image: url("https://assets.cdn.filesafe.space/pOUHT87c9QESlEwIaJkr/media/68193982ef825f341b342f4a.jpeg") !important;
+    background-position: center;     /* CENTER the image */
+    background-size: cover;          /* SCALE the image to cover the whole element */
+    background-repeat: no-repeat;    /* Prevent tiling */
+}
+
+.cardimage2 {
+    background-image: url("https://assets.cdn.filesafe.space/pOUHT87c9QESlEwIaJkr/media/6819413e7a1b6c0e3bbb4f3c.jpeg") !important;
+    background-position: center;     /* CENTER the image */
+    background-size: cover;          /* SCALE the image to cover the whole element */
+    background-repeat: no-repeat;    /* Prevent tiling */
+}
+
+.cardimage3 {
+    background-image: url("https://assets.cdn.filesafe.space/pOUHT87c9QESlEwIaJkr/media/681942875a4913235d65901b.jpeg") !important;
+    background-position: center;     /* CENTER the image */
+    background-size: cover;          /* SCALE the image to cover the whole element */
+    background-repeat: no-repeat;    /* Prevent tiling */
+}
+
+.numbersection {
+    height: 1000px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+
+.numberimage1 {
+    height: 800px;
+    width: auto;
+    object-fit: cover;
+}
+
+.numbertext-container {
+    display: flex;
+    align-items: center;
+}
+
+.subnumbertext-container {
+    height: 60%;
+}
+
+.incident-image {
+    height:260px;
+    width:auto; 
+    max-width: 200px;
+    border-radius: 10px;
+    object-fit: cover;
+
 .user-greeting {
     color: #007bff;
     font-weight: bold;
@@ -227,4 +420,8 @@ button {
     background: #120e08;
     color: white;
 }
+
+
+
+
 
