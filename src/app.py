@@ -162,9 +162,11 @@ def login():
 @app.route('/private', methods=['GET'])
 @jwt_required()
 def private():
-    current_user = get_jwt_identity()
-    print(current_user)
-    return jsonify({'msg': 'Si tienes un token valido y accediste a la pagina privada'})
+    current_user_email = get_jwt_identity()
+    user = User.query.filter_by(email=current_user_email).first()
+    if not user:
+        return jsonify({'msg': 'Usuario no encontrado'}), 404
+    return jsonify(user.serialize()), 200
 
 @app.route('/api/admin', methods=['GET'])
 @jwt_required()

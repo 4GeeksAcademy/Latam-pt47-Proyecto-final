@@ -5,12 +5,27 @@ export const Navbar = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(false);
     
     // Verificar si hay un token al cargar el componente y cuando cambia la ruta
     useEffect(() => {
         const checkAuthStatus = () => {
             const token = sessionStorage.getItem("token");
             setIsAuthenticated(!!token);
+            
+            // Comprobar si el usuario es administrador
+            try {
+                const userData = sessionStorage.getItem("user");
+                if (userData) {
+                    const user = JSON.parse(userData);
+                    setIsAdmin(user.is_admin === true);
+                } else {
+                    setIsAdmin(false);
+                }
+            } catch (error) {
+                console.error("Error parsing user data:", error);
+                setIsAdmin(false);
+            }
         };
         
         // Verificar estado de autenticación
@@ -32,6 +47,7 @@ export const Navbar = () => {
         sessionStorage.removeItem("user");
         // Actualizar el estado
         setIsAuthenticated(false);
+        setIsAdmin(false);
         // Redirigir a la página principal
         navigate("/");
     };
@@ -51,6 +67,11 @@ export const Navbar = () => {
                     <>
                         <Link to="/subirpin">Subir Pin</Link>
                         <Link to="/terminos">Términos y Condiciones</Link>
+                        
+                        {/* Mostrar enlace Admin solo si el usuario es administrador */}
+                        {isAdmin && (
+                            <Link to="/moderador">Admin</Link>
+                        )}
 
                         <button 
                             onClick={handleLogout} 
@@ -65,7 +86,6 @@ export const Navbar = () => {
                         <Link to="/signup">Registro</Link>
                         <Link to="/subirpin">Subir Pin</Link>
                         <Link to="/terminos">Términos y Condiciones</Link>
-
                     </>
                 )}
             </div>
