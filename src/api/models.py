@@ -41,7 +41,8 @@ class User(db.Model):
             "username": self.username,
             "name": self.name,
             "phone": self.phone,
-            "email": self.email
+            "email": self.email,
+            "is_admin": self.is_admin
         }
 
 
