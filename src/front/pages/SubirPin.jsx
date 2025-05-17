@@ -4,23 +4,26 @@ import { Link, useNavigate } from 'react-router-dom';
 export const SubirPin = () => {
     const navigate = useNavigate();
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [showAuthMessage, setShowAuthMessage] = useState(false);
     const [titulo, setTitulo] = useState("");
     const [descripcion, setDescripcion] = useState("");
     const [tipo, setTipo] = useState("");
     const [imagen, setImagen] = useState(null);
 
     useEffect(() => {
-        const checkAuthentication = async () => {
-            const token = sessionStorage.getItem("token");
-            if (!token) {
-                alert("Necesitas iniciar sesión para subir un pin.");
-                navigate("/login");
-                return;
-            }
+        const token = sessionStorage.getItem("token");
+        if (!token) {
+            setShowAuthMessage(true);
+            setTimeout(() => {
+                navigate("/login", { replace: true });
+            }, 2000);
+            return;
+        }
 
+        const checkAuthentication = async () => {
             try {
                 const backendUrl = import.meta.env.VITE_BACKEND_URL;
-                const response = await fetch(`${backendUrl}/private`, {
+                const response = await fetch(`${backendUrl}/api/private`, {
                     method: "GET",
                     headers: { 
                         "Content-Type": "application/json",
@@ -33,13 +36,17 @@ export const SubirPin = () => {
                 } else {
                     sessionStorage.removeItem("token");
                     sessionStorage.removeItem("user");
-                    alert("Su sesión ha expirado. Por favor, inicie sesión nuevamente.");
-                    navigate("/login");
+                    setShowAuthMessage(true);
+                    setTimeout(() => {
+                        navigate("/login", { replace: true });
+                    }, 2000);
                 }
             } catch (error) {
                 console.error("Error de autenticación:", error);
-                alert("Hubo un problema de conexión. Por favor, intente nuevamente.");
-                navigate("/login");
+                setShowAuthMessage(true);
+                setTimeout(() => {
+                    navigate("/login", { replace: true });
+                }, 2000);
             }
         };
 
@@ -91,6 +98,14 @@ export const SubirPin = () => {
             alert("Hubo un problema al enviar el reporte");
         }
     };
+
+    if (showAuthMessage) {
+        return (
+            <div className="alert alert-warning text-center mt-5">
+                Debes estar logueado para subir un pin. Redirigiendo al login...
+            </div>
+        );
+    }
 
     if (!isAuthenticated) {
         return null; 
