@@ -382,7 +382,7 @@ textarea {
     border-radius: 8px;
     margin-bottom: 15px;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-    width: 100%;
+    width: 50%;
 }
 
 
@@ -396,12 +396,7 @@ info-publicacion {
     flex: 1;
 }
 
-.acciones-publicacion {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 10px;
-}
+
 button {
     padding: 10px;
     font-size: 16px;
@@ -412,15 +407,41 @@ button {
 
 
 .btn-ban {
-    background: #240e0d;
+    background: #462321;
     color: white;
 }
 
 .btn-delete {
-    background: #120e08;
+    background: #653e04;
     color: white;
 }
+.incidente-box {
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px auto; /* Separación entre incidentes */
+    background-color: #f9f9f9;
+    box-shadow: 3px 3px 12px rgba(0, 0, 0, 0.2);
+    width: 80%; /* Ajusta según tu diseño */
+}
 
+.incidente-info {
+    padding: 15px;
+}
+
+.botones {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.reportes-box {
+    margin-top: 20px;
+    padding: 15px;
+    border-top: 2px solid #ddd;
+    background-color: #ffffff;
+    border-radius: 8px;
+}
 
 
 
