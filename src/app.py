@@ -16,7 +16,8 @@ from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import JWTManager
 from flask_bcrypt import Bcrypt
-from datetime import timedelta 
+from datetime import timedelta
+from sqlalchemy.orm import joinedload
 
 
 
@@ -180,7 +181,7 @@ def admin_reported_incidents():
     if not user.is_admin:
         return jsonify({'msg': 'Acceso denegado. Se requieren privilegios de administrador.'}), 403
     
-    incidents = Incidentes.query.all()
+    incidents = Incidentes.query.options(joinedload(Incidentes.reports).joinedload(Reports.user)).all()
     
     reported_incidents = []
     
@@ -200,7 +201,8 @@ def admin_reported_incidents():
                         'id': report.id,
                         'type': report.reportType,
                         'description': report.description,
-                        'user_id': report.user_id
+                        'user_id': report.user_id,
+                        'username': report.user.username if report.user else "Desconocido"
                     } for report in incident.reports
                 ]
                 
@@ -215,7 +217,8 @@ def admin_reported_incidents():
                     'id': report.id,
                     'type': report.reportType,
                     'description': report.description,
-                    'user_id': report.user_id
+                    'user_id': report.user_id,
+                    'user': report.user.username if report.user else "Desconocido"
                 } for report in incident.reports
             ]
             
@@ -246,7 +249,7 @@ def subirpin():
         latitud = body['latitud'],
         type = body['type'],
         description = body['description'],
-        user_id = body['user_id']
+        user_id = body['user_id'],
     )
 
     db.session.add(new_incident)

@@ -1,69 +1,113 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
 
 export const Moderador = () => {
-    //  Reportes de ejemplo para pruebas
-    const [reportes, setReportes] = useState([
-        {
-            id: 1,
-            user_name: "UsuarioEjemplo1",
-            description: "Reporte de ejemplo 1",
-            image: "https://via.placeholder.com/150",
-            type: "ciclista",
-            longitud: -58.3816,
-            latitud: -34.6037,
-            likes_count: 5,
-            reports_count: 3,
-            user_id: 101,
-        },
-        {
-            id: 2,
-            user_name: "UsuarioEjemplo2",
-            description: "Reporte de ejemplo 2",
-            image: "https://via.placeholder.com/150",
-            type: "peaton",
-            longitud: -58.3889,
-            latitud: -34.6058,
-            likes_count: 10,
-            reports_count: 7,
-            user_id: 102,
-        }
-    ]);
+    const [reportes, setReportes] = useState([]);
+    const navigate = useNavigate();
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+    console.log("Backend URL:", backendUrl);
+    
 
-    // Funciones de prueba para acciones en reportes
-    const banearUsuario = async (userId) => {
-        console.log(`Usuario ${userId} baneado (simulación)`);
+  
+
+    useEffect(() => {
+        const userData = sessionStorage.getItem("user");
+        const user = userData ? JSON.parse(userData) : null;
+
+        if (!user || !user.is_admin) {
+            navigate("/"); // Redirigir a la página principal si no es admin
+        }
+    }, []);
+
+    useEffect(() => {
+        const fetchReports = async () => {
+            try {
+                const backendUrl = import.meta.env.VITE_BACKEND_URL;
+                const token = sessionStorage.getItem("token");
+                const response = await fetch(`${backendUrl}/api/admin`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`,
+                    },
+                });
+                if (!response.ok) throw new Error("Error al cargar reportes");
+
+                const data = await response.json();
+                setReportes(data.reported_incidents);
+            } catch (error) {
+                console.error("Error en la obtención de reportes:", error);
+            }
+        };
+        fetchReports();
+    }, [backendUrl]);
+
+    const eliminarReporte = async (id) => {
+        try {
+            const token = sessionStorage.getItem("token");
+            const response = await fetch(`${backendUrl}/api/delete-incident/${id}`, {
+                method: "DELETE",
+                headers: { "Authorization": `Bearer ${token}` },
+            });
+
+            if (!response.ok) throw new Error("Error al eliminar reporte");
+
+            setReportes(reportes.filter(reporte => reporte.id !== id));
+        } catch (error) {
+            console.error("Error al eliminar reporte:", error);
+        }
     };
 
-    const borrarReporte = async (reportId) => {
-        console.log(`Reporte ${reportId} eliminado (simulación)`);
-        setReportes(reportes.filter((r) => r.id !== reportId));
+    const banearUsuario = async (userId) => {
+        try {
+            const token = sessionStorage.getItem("token");
+            const response = await fetch(`${backendUrl}/api/ban-user/${userId}`, {
+                method: "PUT",
+                headers: { "Authorization": `Bearer ${token}` },
+            });
+
+            if (!response.ok) throw new Error("Error al banear usuario");
+        } catch (error) {
+            console.error("Error al banear usuario:", error);
+        }
     };
 
     return (
         <div className="moderador-container">
             <header className="header-section admin">
-                <h1>Panel de Moderador (Pruebas)</h1>
+                <h1>Panel de Moderador</h1>
             </header>
 
             <div className="publicaciones-container">
                 <h2>Reportes de usuarios</h2>
-                {reportes.map((report) => (
-                    <div key={report.id} className="publicacion">
-                        <div className="publicacion-info">
-                            <p><strong>Usuario:</strong> {report.user_name}</p>
-                            <p><strong>Descripción:</strong> {report.description}</p>
-                            {report.image && <img src={report.image} alt="Reporte" />}
-                            <p><strong>Tipo:</strong> {report.type}</p>
-                            <p><strong>Longitud:</strong> {report.longitud}</p>
-                            <p><strong>Latitud:</strong> {report.latitud}</p>
-                            <p><strong>Likes:</strong> {report.likes_count}</p>
-                            <p><strong>Reportes:</strong> {report.reports_count}</p>
-                            <p><strong>Usuario ID:</strong> {report.user_id}</p>
-                        </div>
 
-                        <div className="acciones-publicacion">
-                            <button className="btn-ban me-2" onClick={() => banearUsuario(report.user_id)}>🚫 Banear Usuario</button>
-                            <button className="btn-delete" onClick={() => borrarReporte(report.id)}>🗑️ Borrar Reporte</button>
+                {reportes.map((incident) => (
+                    <div key={incident.id} className="incidente-box">
+                        <div className="incidente-info">
+                            <h3>{incident.type}</h3>
+                            <p><strong>Descripción:</strong> {incident.description}</p>
+                            <p><strong>Ubicación:</strong> Lat: {incident.latitud}, Lng: {incident.longitud}</p>
+                            <p><strong>Usuario que creó:</strong> {incident.username || "Desconocido"}</p>
+                            <p><strong>Likes:</strong> {incident.num_likes}</p>
+                            <p><strong>Reportes:</strong> {incident.num_reports}</p>
+
+                            <div className="botones">
+                                <button className="btn btn-ban" onClick={() => banearUsuario(incident.user_id)}>🚫 Banear Usuario</button>
+                                <button className="btn btn-delete" onClick={() => eliminarReporte(incident.id)}>🗑️ Borrar Publicación</button>
+                            </div>
+
+                            <div className="reportes-box">
+                                <h4>Detalles de Reportes</h4>
+                                <ul>
+                                    {incident.reports.map((report) => (
+                                        <li key={report.id}>
+                                            <p><strong>Usuario:</strong> {report.user}</p>
+                                            <p><strong>Motivo:</strong> {report.type}</p>
+                                            <p><strong>Descripción:</strong> {report.description}</p>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 ))}
@@ -71,5 +115,6 @@ export const Moderador = () => {
         </div>
     );
 };
+
 
 export default Moderador;
