@@ -275,6 +275,7 @@
     max-width: 200px;
     border-radius: 10px;
     object-fit: cover;
+}
 
 .user-greeting {
     color: #007bff;
@@ -299,6 +300,7 @@
     color: white;
     background-color: #dc3545;
     cursor: pointer;
+}
 
 .subir-pin-container {
     display: flex;
