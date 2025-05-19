@@ -25,7 +25,7 @@ export const Login = () => {
 
     try {
       const backendUrl = import.meta.env.VITE_BACKEND_URL;
-      const response = await fetch(`${backendUrl}/login`, {
+      const response = await fetch(`${backendUrl}/api/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
@@ -37,12 +37,10 @@ export const Login = () => {
       const data = await response.json();
       
       if (response.ok) {
-        // Guardar el token en sessionStorage
         sessionStorage.setItem("token", data.token);
         
-        // Obtener información del usuario usando el token
         try {
-          const userResponse = await fetch(`${backendUrl}/private`, {
+          const userResponse = await fetch(`${backendUrl}/api/private`, {
             method: "GET",
             headers: { 
               "Content-Type": "application/json",
@@ -52,20 +50,16 @@ export const Login = () => {
           
           if (userResponse.ok) {
             const userData = await userResponse.json();
-            // Guardar datos del usuario en sessionStorage
             sessionStorage.setItem("user", JSON.stringify({
               email: formData.email,
-              // Podemos almacenar más datos si están disponibles en la respuesta
               ...userData
             }));
           }
         } catch (userError) {
           console.error("Error al obtener datos del usuario:", userError);
-          // Aún si falla, guardamos al menos el email que conocemos
           sessionStorage.setItem("user", JSON.stringify({ email: formData.email }));
         }
         
-        // Alert success and navigate to home page
         alert(data.msg || "Inicio de sesión exitoso");
         navigate("/");
       } else {

@@ -16,7 +16,8 @@ from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import JWTManager
 from flask_bcrypt import Bcrypt
-from datetime import timedelta 
+from datetime import timedelta
+from sqlalchemy.orm import joinedload
 
 
 
@@ -84,7 +85,7 @@ def serve_any_other_file(path):
     return response
 
 
-@app.route('/singup', methods=['POST'])
+@app.route('/api/singup', methods=['POST'])
 def signup():
     body = request.get_json(silent=True)
     if body is None:
@@ -137,7 +138,7 @@ def signup():
         return jsonify({'msg': f'Error al registrar usuario: {str(e)}'}), 500
     
 
-@app.route('/login', methods=['POST'])
+@app.route('/api/login', methods=['POST'])
 def login():
     body = request.get_json(silent=True)
     if body is None:
@@ -159,14 +160,16 @@ def login():
     acces_token = create_access_token(identity= user.email)
     return({'msg': 'Estas logeado', 'token': acces_token}), 200
 
-@app.route('/private', methods=['GET'])
+@app.route('/api/private', methods=['GET'])
 @jwt_required()
 def private():
-    current_user = get_jwt_identity()
-    print(current_user)
-    return jsonify({'msg': 'Si tienes un token valido y accediste a la pagina privada'})
+    current_user_email = get_jwt_identity()
+    user = User.query.filter_by(email=current_user_email).first()
+    if not user:
+        return jsonify({'msg': 'Usuario no encontrado'}), 404
+    return jsonify(user.serialize()), 200
 
-@app.route('/admin', methods=['GET'])
+@app.route('/api/admin', methods=['GET'])
 @jwt_required()
 def admin_reported_incidents():
     current_user_email = get_jwt_identity()
@@ -178,7 +181,7 @@ def admin_reported_incidents():
     if not user.is_admin:
         return jsonify({'msg': 'Acceso denegado. Se requieren privilegios de administrador.'}), 403
     
-    incidents = Incidentes.query.all()
+    incidents = Incidentes.query.options(joinedload(Incidentes.reports).joinedload(Reports.user)).all()
     
     reported_incidents = []
     
@@ -198,7 +201,8 @@ def admin_reported_incidents():
                         'id': report.id,
                         'type': report.reportType,
                         'description': report.description,
-                        'user_id': report.user_id
+                        'user_id': report.user_id,
+                        'username': report.user.username if report.user else "Desconocido"
                     } for report in incident.reports
                 ]
                 
@@ -213,7 +217,8 @@ def admin_reported_incidents():
                     'id': report.id,
                     'type': report.reportType,
                     'description': report.description,
-                    'user_id': report.user_id
+                    'user_id': report.user_id,
+                    'user': report.user.username if report.user else "Desconocido"
                 } for report in incident.reports
             ]
             
@@ -224,7 +229,7 @@ def admin_reported_incidents():
         'count': len(reported_incidents)
     })
 
-@app.route('/subir-pin', methods = ['POST'])
+@app.route('/api/subir-pin', methods = ['POST'])
 def subirpin():
     body = request.get_json(silent = True)
     if body is None:
@@ -244,7 +249,7 @@ def subirpin():
         latitud = body['latitud'],
         type = body['type'],
         description = body['description'],
-        user_id = body['user_id']
+        user_id = body['user_id'],
     )
 
     db.session.add(new_incident)
@@ -258,7 +263,7 @@ def subirpin():
         db.session.rollback()
         return jsonify({'msg':f'error al registrar incidente:{str(e)}'}),500
     
-@app.route('/ban-user/<int:user_id>', methods = ['PUT'])
+@app.route('/api/ban-user/<int:user_id>', methods = ['PUT'])
 @jwt_required()
 def ban_user(user_id):
     user = User.query.get(user_id)
@@ -280,7 +285,7 @@ def ban_user(user_id):
         return jsonify({'msg': f'Error al banear usuario: {str(e)}'}), 500
 
 
-@app.route('/delete-incident/<int:incident_id>', methods=['DELETE'])
+@app.route('/api/delete-incident/<int:incident_id>', methods=['DELETE'])
 @jwt_required()
 def delete_incident(incident_id):
     incident = Incidentes.query.get(incident_id)
@@ -298,6 +303,75 @@ def delete_incident(incident_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'msg': f'Error al eliminar incidente: {str(e)}'}), 500
+
+@app.route('/api/all-incidents', methods=['GET'])
+def all_incidentes():
+    incidents_query = Incidentes.query.all()    
+
+    response_body = {
+        "msg": "Success",
+        "results": list(map(lambda incident: incident.serialize(), incidents_query)),
+    }
+    return jsonify(response_body),200
+
+@app.route('/api/incidents/<string:type>',methods=['GET'])
+def get_incidents_by_type(type):
+    incidents_query = Incidentes.query.filter_by(type=type).all()
+    if not incidents_query:
+        return jsonify({'msg': f'No se encontraron incidentes del tipo "{type}"'}),404
+    
+    response_body = {
+        'msg': 'Success',
+        'results': list(map(lambda incident: incident.serialize(), incidents_query))
+    }
+    return jsonify(response_body),200
+
+@app.route('/api/incident/<int:incident_id>', methods=['GET'])
+@jwt_required()
+def like_incident(incident_id):
+    current_user_email = get_jwt_identity()
+    user = User.query.filter_by(email=current_user_email).first()
+    existing_like = Likes.query.filter_by(user_id=user.id, incident_id=incident_id).first()
+    if existing_like:
+       return jsonify({'msg': 'Ya has dado like a este incidente'}),400
+    
+    new_like = Likes(user_id=user.id, incident_id=incident_id)
+    db.session.add(new_like)
+    try:
+        db.session.commit()
+        return jsonify({'msg': 'Like agregado exitosamente'}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'msg': f'Error al agregar like: {str(e)}'}), 500
+    
+@app.route('/api/report/<int:incident_id>', methods=['POST'])
+@jwt_required()
+def report_incident(incident_id):
+    current_user_email = get_jwt_identity()
+    user = User.query.filter_by(email = current_user_email).first()
+    body = request.get_json(silent=True)
+    if not body or not body.get('reportType'):
+        return jsonify({'msg': 'Debes elegir un tipo de reporte'}), 400
+    if not body.get('description'):
+        return jsonify({'msg': 'Debes ingresar una descripcion'}), 400
+
+    existing_report = Reports.query.filter_by(user_id = user.id, incident_id = incident_id).first()
+    if existing_report:
+        return jsonify({'msg': 'Ya has reportado este incidente'}), 400
+
+    new_report = Reports(
+        user_id=user.id,
+        incident_id=incident_id,
+        reportType=body['reportType'],
+        description=body['description']
+    )
+    db.session.add(new_report)
+    try:
+        db.session.commit()
+        return jsonify({'msg': 'Reporte agregado exitosamente'}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'msg': f'Error al agregar reporte: {str(e)}'}), 500   
 
 
 

@@ -13,6 +13,7 @@ import { Signup } from "./pages/Signup";
 import { Login } from "./pages/Login";
 import { Terminosycondiciones } from "./pages/Terminosycondiciones";
 import {SubirPin} from "./pages/SubirPin";
+import { Moderador } from "./pages/Moderador";
 
 export const router = createBrowserRouter(
     createRoutesFromElements(
@@ -33,6 +34,7 @@ export const router = createBrowserRouter(
         <Route path="/login" element={<Login />} />
         <Route path="/terminos" element={<Terminosycondiciones />} />
         <Route path="/subirpin" element={<SubirPin />} />
+        <Route path="/moderador" element={<Moderador />} />
         {/* Add more routes as needed */}
       </Route>
     )
