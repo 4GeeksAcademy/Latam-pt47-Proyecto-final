@@ -85,6 +85,10 @@ export const Moderador = () => {
                     <div key={incident.id} className="incidente-box">
                         <div className="incidente-info">
                             <h3>{incident.type}</h3>
+                            <img src={incident.image ? incident.image : "/public/Logo-GuardianUrbano.png"}
+                                className="card-img-top"
+                                alt="Reporte"
+                            />
                             <p><strong>Descripción:</strong> {incident.description}</p>
                             <p><strong>Ubicación:</strong> Lat: {incident.latitud}, Lng: {incident.longitud}</p>
                             <p><strong>Usuario que creó:</strong> {incident.username || "Desconocido"}</p>

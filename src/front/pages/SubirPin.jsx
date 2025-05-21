@@ -184,7 +184,7 @@ export const SubirPin = () => {
 
             <div className="container subir-pin-container">
                 <div className="mapa-container">
-                    <MapContainer center={[4.60971, -74.08175]} zoom={13} style={{ height: 538, width: 638 }} >
+                    <MapContainer center={[4.60971, -74.08175]} zoom={13} style={{ height: "97vh", width: "100%" }} >
                         <TileLayer
 
                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
