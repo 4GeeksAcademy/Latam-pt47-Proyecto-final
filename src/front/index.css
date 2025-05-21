@@ -310,7 +310,12 @@
 }
 
 .mapa-container {
-    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 800px;
+    height: auto;
 }
 
 .mapa-img {
