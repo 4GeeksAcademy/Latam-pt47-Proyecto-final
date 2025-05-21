@@ -1,28 +1,51 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import {
+    MapContainer,
+    TileLayer,
+    useMap,
+    Marker,
+    useMapEvents,
+} from 'react-leaflet'
+import L from "leaflet"
+import { Icon } from "leaflet"
+import 'leaflet/dist/leaflet.css';
+
+
+
 
 export const SubirPin = () => {
     const navigate = useNavigate();
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [showAuthMessage, setShowAuthMessage] = useState(false);
     const [titulo, setTitulo] = useState("");
     const [descripcion, setDescripcion] = useState("");
     const [tipo, setTipo] = useState("");
     const [imagen, setImagen] = useState(null);
 
-    useEffect(() => {
-        const checkAuthentication = async () => {
-            const token = sessionStorage.getItem("token");
-            if (!token) {
-                alert("Necesitas iniciar sesión para subir un pin.");
-                navigate("/login");
-                return;
-            }
+    const customIcon = new L.Icon({
+        iconUrl: "public/Logo-GuardianUrbano.png",
+        iconSize: new L.Point(28, 38),
+        iconAnchor:  [10, 35]
+    })
 
+
+    useEffect(() => {
+        const token = sessionStorage.getItem("token");
+        if (!token) {
+            setShowAuthMessage(true);
+            setTimeout(() => {
+                navigate("/login", { replace: true });
+            }, 2000);
+            return;
+        }
+
+        const checkAuthentication = async () => {
             try {
                 const backendUrl = import.meta.env.VITE_BACKEND_URL;
-                const response = await fetch(`${backendUrl}/private`, {
+                const response = await fetch(`${backendUrl}/api/private`, {
                     method: "GET",
-                    headers: { 
+                    headers: {
                         "Content-Type": "application/json",
                         "Authorization": `Bearer ${token}`
                     }
@@ -33,13 +56,17 @@ export const SubirPin = () => {
                 } else {
                     sessionStorage.removeItem("token");
                     sessionStorage.removeItem("user");
-                    alert("Su sesión ha expirado. Por favor, inicie sesión nuevamente.");
-                    navigate("/login");
+                    setShowAuthMessage(true);
+                    setTimeout(() => {
+                        navigate("/login", { replace: true });
+                    }, 2000);
                 }
             } catch (error) {
                 console.error("Error de autenticación:", error);
-                alert("Hubo un problema de conexión. Por favor, intente nuevamente.");
-                navigate("/login");
+                setShowAuthMessage(true);
+                setTimeout(() => {
+                    navigate("/login", { replace: true });
+                }, 2000);
             }
         };
 
@@ -48,7 +75,7 @@ export const SubirPin = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         const token = sessionStorage.getItem("token");
         if (!token) {
             alert("Su sesión ha expirado. Por favor, inicie sesión nuevamente.");
@@ -62,14 +89,14 @@ export const SubirPin = () => {
             formData.append('titulo', titulo);
             formData.append('descripcion', descripcion);
             formData.append('tipo', tipo);
-            
+
             if (imagen) {
                 formData.append('imagen', imagen);
             }
 
             const response = await fetch(`${backendUrl}/subir-pin`, {
                 method: "POST",
-                headers: { 
+                headers: {
                     "Authorization": `Bearer ${token}`
                 },
                 body: formData
@@ -92,73 +119,137 @@ export const SubirPin = () => {
         }
     };
 
-    if (!isAuthenticated) {
-        return null; 
+    if (showAuthMessage) {
+        return (
+            <div className="alert alert-warning text-center mt-5">
+                Debes estar logueado para subir un pin. Redirigiendo al login...
+            </div>
+        );
     }
+
+    if (!isAuthenticated) {
+        return null;
+    }
+
+
+    function LocationMarker() {
+        const [position, setPosition] = useState(null);
+
+        useMapEvents({
+            click(e) {
+                const coords = e.latlng;
+                setPosition(coords);
+                console.log('Clicked at:', coords);
+
+            },
+        });
+
+        return position === null ? null : (
+            <Marker position={position} icon={customIcon} />
+        );
+    }
+
+    function LocationMover() {
+        const [Hoverposition, setHoverPosition] = useState(null);
+
+        useMapEvents({
+            mousemove(e) {
+                const coords = e.latlng;
+                setHoverPosition(coords)
+
+
+            },
+        });
+
+        return Hoverposition === null ? null : (
+            <Marker position={Hoverposition} icon={customIcon} />
+        );
+    }
+
+
+
+
+
+
+
+
+
 
     return (
         <div className="subir-pin">
             <header className="header-section text-center py-4">
-                <h1 className="text-white">Subir Pin</h1> 
+                <h1 className="text-white">Subir Pin</h1>
                 <p className="text-white">No dejes que la inseguridad pase desapercibida.</p>
             </header>
 
             <div className="container subir-pin-container">
                 <div className="mapa-container">
-                    <img src="https://st3.depositphotos.com/1825463/32084/i/1600/depositphotos_320847274-stock-photo-city-map-pin-pointers-rendering.jpg" alt="Mapa estático" className="mapa-img" />
+                    <MapContainer center={[4.60971, -74.08175]} zoom={13} style={{ height: 538, width: 638 }} >
+                        <TileLayer
+
+                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+
+
+                        />
+
+                        <LocationMarker />
+                        <LocationMover />
+
+
+                    </MapContainer>
                 </div>
 
                 <form className="form-container" onSubmit={handleSubmit}>
                     <div className="input-container">
-                      <p><strong>Marca tu incidente en la plataforma.</strong></p>
-                      <label htmlFor="titulo">
-                        Título del Incidente:
-                      </label>
-                      <input 
-                         id="titulo"
-                         type="text" 
-                         value={titulo} 
-                         onChange={(e) => setTitulo(e.target.value)} 
-                         required 
-                      />
+                        <p><strong>Marca tu incidente en la plataforma.</strong></p>
+                        <label htmlFor="titulo">
+                            Título del Incidente:
+                        </label>
+                        <input
+                            id="titulo"
+                            type="text"
+                            value={titulo}
+                            onChange={(e) => setTitulo(e.target.value)}
+                            required
+                        />
                     </div>
-                    
+
                     <div className="textarea-container">
                         <label htmlFor="descripcion">
-                         Descripción:
+                            Descripción:
                         </label>
                         <textarea
                             id="descripcion"
-                            value={descripcion} 
-                            onChange={(e) => setDescripcion(e.target.value)} 
-                            required 
+                            value={descripcion}
+                            onChange={(e) => setDescripcion(e.target.value)}
+                            required
                         />
                     </div>
 
                     <label>Tipo de Incidente:</label>
                     <div className="checkbox-group">
                         <label>
-                            <input 
-                                type="radio" 
-                                name="tipo" 
-                                value="Automovilístico" 
+                            <input
+                                type="radio"
+                                name="tipo"
+                                value="Automovilístico"
                                 onChange={(e) => setTipo(e.target.value)}
                                 required
                             /> Automovilístico
                         </label>
                         <label>
-                            <input 
-                                type="radio" 
-                                name="tipo" 
-                                value="Ciclístico" 
+                            <input
+                                type="radio"
+                                name="tipo"
+                                value="Ciclístico"
                                 onChange={(e) => setTipo(e.target.value)}
                             /> Ciclístico
                         </label>
                         <label>
-                            <input 
-                                type="radio" 
-                                name="tipo" 
-                                value="Peatón" 
+                            <input
+                                type="radio"
+                                name="tipo"
+                                value="Peatón"
                                 onChange={(e) => setTipo(e.target.value)}
                             /> Peatón
                         </label>
@@ -166,9 +257,9 @@ export const SubirPin = () => {
 
                     <label>
                         Subir imagen (opcional):
-                        <input 
-                            type="file" 
-                            onChange={(e) => setImagen(e.target.files[0])} 
+                        <input
+                            type="file"
+                            onChange={(e) => setImagen(e.target.files[0])}
                         />
                     </label>
 

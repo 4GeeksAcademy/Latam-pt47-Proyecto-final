@@ -35,7 +35,7 @@ export const Signup = () => {
 
         try {
             const backendUrl = import.meta.env.VITE_BACKEND_URL;
-            const response = await fetch(`${backendUrl}/singup`, {
+            const response = await fetch(`${backendUrl}/api/singup`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

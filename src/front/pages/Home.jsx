@@ -5,11 +5,19 @@ import { Link } from "react-router-dom";
 import IncidentCard from "../components/IncidentCard.jsx";
 import Jumbotron from "../components/Jumbotron.jsx";
 
+
 import {
 	MapContainer,
 	TileLayer,
 	useMap,
-} from 'https://cdn.esm.sh/react-leaflet'
+	Marker,
+	
+} from 'react-leaflet'
+
+import {Icon} from "leaflet"
+
+import 'leaflet/dist/leaflet.css';
+
 
 export const Home = () => {
 
@@ -40,6 +48,17 @@ export const Home = () => {
 	useEffect(() => {
 		loadMessage()
 	}, [])
+
+	  
+const markers = [
+    {position: [4.60971, -74.08175]},
+    {position: [4.61071, -74.08175]},
+    {position: [4.61171, -74.08175]},]
+
+	const customIcon = new L.Icon({
+			iconUrl: "public/Logo-GuardianUrbano.png",
+			iconSize: new L.Point(28, 38),
+			iconAnchor:  [10, 35]})
 
 	return (
 
@@ -72,7 +91,24 @@ export const Home = () => {
 							</div>
 
 							<div class="col">
-								<img src="https://developers.google.com/static/maps/documentation/urls/images/map-no-params.png" alt="" className="place_holder_map" />
+								<MapContainer center={[4.60971, -74.08175]} zoom ={13}  style={{ height: "100%", width: "100%" }} >
+									<TileLayer
+
+									url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+
+									/>
+
+									{
+										markers.map((marker, index) => {
+											return (
+												<Marker key={index} position={marker.position} icon = {customIcon} />
+											)	
+
+										})
+									}
+
+
+								</MapContainer>
 							</div>
 
 

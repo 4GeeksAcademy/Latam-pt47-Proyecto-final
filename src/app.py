@@ -85,7 +85,7 @@ def serve_any_other_file(path):
     return response
 
 
-@app.route('/singup', methods=['POST'])
+@app.route('/api/singup', methods=['POST'])
 def signup():
     body = request.get_json(silent=True)
     if body is None:
@@ -138,7 +138,7 @@ def signup():
         return jsonify({'msg': f'Error al registrar usuario: {str(e)}'}), 500
     
 
-@app.route('/login', methods=['POST'])
+@app.route('/api/login', methods=['POST'])
 def login():
     body = request.get_json(silent=True)
     if body is None:
@@ -160,7 +160,7 @@ def login():
     acces_token = create_access_token(identity= user.email)
     return({'msg': 'Estas logeado', 'token': acces_token}), 200
 
-@app.route('/private', methods=['GET'])
+@app.route('/api/private', methods=['GET'])
 @jwt_required()
 def private():
     current_user_email = get_jwt_identity()
@@ -325,6 +325,53 @@ def get_incidents_by_type(type):
         'results': list(map(lambda incident: incident.serialize(), incidents_query))
     }
     return jsonify(response_body),200
+
+@app.route('/api/incident/<int:incident_id>', methods=['GET'])
+@jwt_required()
+def like_incident(incident_id):
+    current_user_email = get_jwt_identity()
+    user = User.query.filter_by(email=current_user_email).first()
+    existing_like = Likes.query.filter_by(user_id=user.id, incident_id=incident_id).first()
+    if existing_like:
+       return jsonify({'msg': 'Ya has dado like a este incidente'}),400
+    
+    new_like = Likes(user_id=user.id, incident_id=incident_id)
+    db.session.add(new_like)
+    try:
+        db.session.commit()
+        return jsonify({'msg': 'Like agregado exitosamente'}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'msg': f'Error al agregar like: {str(e)}'}), 500
+    
+@app.route('/api/report/<int:incident_id>', methods=['POST'])
+@jwt_required()
+def report_incident(incident_id):
+    current_user_email = get_jwt_identity()
+    user = User.query.filter_by(email = current_user_email).first()
+    body = request.get_json(silent=True)
+    if not body or not body.get('reportType'):
+        return jsonify({'msg': 'Debes elegir un tipo de reporte'}), 400
+    if not body.get('description'):
+        return jsonify({'msg': 'Debes ingresar una descripcion'}), 400
+
+    existing_report = Reports.query.filter_by(user_id = user.id, incident_id = incident_id).first()
+    if existing_report:
+        return jsonify({'msg': 'Ya has reportado este incidente'}), 400
+
+    new_report = Reports(
+        user_id=user.id,
+        incident_id=incident_id,
+        reportType=body['reportType'],
+        description=body['description']
+    )
+    db.session.add(new_report)
+    try:
+        db.session.commit()
+        return jsonify({'msg': 'Reporte agregado exitosamente'}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'msg': f'Error al agregar reporte: {str(e)}'}), 500   
 
 
 
