@@ -442,6 +442,11 @@ button {
     background-color: #ffffff;
     border-radius: 8px;
 }
+.card-img-top {
+    width: 200px;
+    height: 150px;
+    object-fit: cover; 
+}
 
 
 
