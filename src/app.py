@@ -236,6 +236,8 @@ def subirpin():
         return jsonify({'msg':'Debes enviar la informacion en el body'}), 400
     if 'longitud' not in body:
         return jsonify({'msg':'El campo longitud es obligatorio'}), 400
+    if 'titulo' not in body:
+        return jsonify({'msg':'El campo titulo es obligatorio'}), 400
     if 'latitud' not in body:
         return jsonify({'msg':'El campo latitud es obligatorio'}), 400
     if 'type' not in body:
@@ -245,6 +247,7 @@ def subirpin():
     
     new_incident = Incidentes(
         image = body['image'],
+        titulo = body['titulo'],
         longitud = body['longitud'],
         latitud = body['latitud'],
         type = body['type'],
