@@ -15,9 +15,12 @@ from flask_jwt_extended import create_access_token
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import JWTManager
+from flask_jwt_extended import decode_token
 from flask_bcrypt import Bcrypt
 from datetime import timedelta
 from sqlalchemy.orm import joinedload
+from flask_mail import Mail, Message
+
 
 
 
@@ -27,6 +30,18 @@ ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
 static_file_dir = os.path.join(os.path.dirname(
     os.path.realpath(__file__)), '../public/')
 app = Flask(__name__)
+
+app.config.update(dict(
+    DEBUG=False,
+    MAIL_SERVER='smtp.gmail.com',
+    MAIL_PORT=587,
+    MAIL_USE_TLS=True,
+    MAIL_USE_SSL=False,
+    MAIL_USERNAME='guardianurbano.4geeks@gmail.com',
+    MAIL_PASSWORD=os.getenv('MAIL_PASSWORD')
+))
+
+mail = Mail(app)
 app.url_map.strict_slashes = False
 
 app.config["JWT_SECRET_KEY"] = os.getenv("JWT_KEY")
@@ -372,6 +387,73 @@ def report_incident(incident_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'msg': f'Error al agregar reporte: {str(e)}'}), 500   
+
+
+@app.route('/api/send-mail', methods = ['GET'])
+def send_mail():
+     msg = Message(
+        subject="Correo enviado en la clase",
+        sender="guardianurbano.4geeks@gmail.com",
+        recipients=["guardianurbano.4geeks@gmail.com"],
+    )
+     msg.html = '<h1> Correo enviado desde la clase </h1>'
+     mail.send(msg)
+     return jsonify({'msg': 'Envie el correo'}), 200
+
+@app.route('/api/forgot-password', methods=['POST'])
+def forgot_password():
+    body = request.get_json(silent=True)
+    if not body or 'email' not in body:
+        return jsonify({'msg': 'Debes enviar el email en el body'}), 400
+    
+    user = User.query.filter_by(email=body['email']).first()
+    if not user:
+        return jsonify({'msg': 'Usuario no encontrado'}), 400
+    
+    reset_token = create_access_token(identity=user.email, expires_delta=timedelta(hours=1))
+    reset_url = f'https://supreme-space-zebra-9vvgq57wq6w2x56g-3000.app.github.dev/reset-password?token={reset_token}'
+
+    msg = Message(
+        subject="Recuperación de contraseña",
+        sender="guardianurbano.4geeks@gmail.com",
+        recipients=[user.email],
+    )
+    msg.html = f"""
+        <h3>Recuperación de contraseña</h3>
+        <p>Haz clic en el siguiente enlace para restablecer tu contraseña:</p>
+        <a href="{reset_url}">{reset_url}</a>
+        <p>Este enlace expirará en 1 hora</p>
+    """
+    try:
+        mail.send(msg)
+        return jsonify({'msg': 'Correo de recuperación enviado'}), 200
+    except Exception as e:
+        return jsonify({'msg': f'Error al enviar correo: {str(e)}'}), 500
+
+@app.route('/api/reset-password', methods=['POST'])
+def reset_password():
+    body = request.get_json(silent=True)
+    if not body or 'token' not in body or 'new_password' not in body:
+        return jsonify({'msg': 'Debes enviar el token y la nueva contraseña en el body'}), 400
+    
+    try:
+        decoded = decode_token(body['token'])
+        user_email = decoded['sub']
+    except Exception:
+        return jsonify({'msg': 'Token inválido o expirado'}), 400
+
+    user = User.query.filter_by(email=user_email).first()
+    if not user:
+        return jsonify({'msg': 'Usuario no encontrado'}), 404    
+    
+    user.password = bcrypt.generate_password_hash(body['new_password']).decode('utf-8')
+    try:
+        db.session.commit()
+        return jsonify({'msg': 'Contraseña actualizada exitosamente'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'msg': f'Error al actualizar contraseña: {str(e)}'}), 500
+
 
 
 
