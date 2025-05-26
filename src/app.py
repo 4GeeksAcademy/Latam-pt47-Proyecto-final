@@ -323,7 +323,7 @@ def get_incidents_by_type(type):
     }
     return jsonify(response_body),200
 
-@app.route('/api/incident/<int:incident_id>', methods=['GET'])
+@app.route('/api/like/<int:incident_id>', methods=['POST'])
 @jwt_required()
 def like_incident(incident_id):
     current_user_email = get_jwt_identity()
