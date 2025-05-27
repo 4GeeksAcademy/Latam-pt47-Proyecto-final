@@ -55,6 +55,7 @@
 		]
 	},
 	"dependencies": {
+		"jwt-decode": "^4.0.0",
 		"leaflet": "^1.9.4",
 		"prop-types": "^15.8.1",
 		"react": "^19.0.0-rc.1",

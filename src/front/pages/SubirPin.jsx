@@ -10,6 +10,7 @@ import {
 import L from "leaflet"
 import { Icon } from "leaflet"
 import 'leaflet/dist/leaflet.css';
+import { jwtDecode } from "jwt-decode";
 
 
 
@@ -22,7 +23,9 @@ export const SubirPin = () => {
     const [descripcion, setDescripcion] = useState("");
     const [tipo, setTipo] = useState("");
     const [imagen, setImagen] = useState(null);
-    
+    const [position, setPosition] = useState(null)
+    const[imgurl, setImgurl] = useState(null)
+    const[userdata, setUserdata] = useState(null)
 
     const customIcon = new L.Icon({
         iconUrl: "public/Logo-GuardianUrbano.png",
@@ -30,9 +33,50 @@ export const SubirPin = () => {
         iconAnchor: [10, 35]
     })
 
+     function LocationMarker() {
+        
+
+        useMapEvents({
+            click(e) {
+                const coords = e.latlng;
+                setPosition(coords);
+                console.log('Clicked at:', coords);
+
+            },
+        });
+
+        return position === null ? null : (
+            <Marker position={position} icon={customIcon} />
+        );
+    }
+
+    function LocationMover() {
+        const [Hoverposition, setHoverPosition] = useState(null);
+
+        useMapEvents({
+            mousemove(e) {
+                const coords = e.latlng;
+                setHoverPosition(coords)
+
+
+            },
+
+            mouseout() {
+                setHoverPosition(null)
+            }
+        });
+
+        return Hoverposition === null ? null : (
+            <Marker position={Hoverposition} icon={customIcon} />
+        );
+    }
+
 
     useEffect(() => {
         const token = sessionStorage.getItem("token");
+        setUserdata(jwtDecode(token))
+        
+
         if (!token) {
             setShowAuthMessage(true);
             setTimeout(() => {
@@ -85,6 +129,8 @@ export const SubirPin = () => {
             .then((res) => res.json())
 
             .then(async(datacloud) => {
+                setImgurl(datacloud.url)
+                console.log(imgurl)
                 
 
                 const token = sessionStorage.getItem("token");
@@ -96,22 +142,29 @@ export const SubirPin = () => {
 
                 try {
                     const backendUrl = import.meta.env.VITE_BACKEND_URL;
-                    const formData = new FormData();
-                    formData.append('titulo', titulo);
-                    formData.append('descripcion', descripcion);
-                    formData.append('tipo', tipo);
+                    const jsonpayload = {
+                        "titulo": titulo, 
+                        "longitud": position.lng,
+                        "latitud":position.lat,
+                        "type":  tipo,
+                        "description": descripcion,
+                        "image" : datacloud.url,
+                        "user_id": userdata.user_id,
+                        "image": datacloud.url ?? null
 
-                    if (imagen) {
-                        formData.append('imagen', datacloud.url);
+
                     }
+
+                   
 
                     const response = await fetch(`${backendUrl}/api/subir-pin`, {
                         method: "POST",
                         headers: {
                             "Authorization": `Bearer ${token}`,
                             "Content-Type": "application/json"
+                            
                         },
-                        body: formData
+                        body: JSON.stringify(jsonpayload)
                     });
 
                     const data = await response.json();
@@ -150,39 +203,7 @@ export const SubirPin = () => {
     }
 
 
-    function LocationMarker() {
-        const [position, setPosition] = useState(null);
-
-        useMapEvents({
-            click(e) {
-                const coords = e.latlng;
-                setPosition(coords);
-                console.log('Clicked at:', coords);
-
-            },
-        });
-
-        return position === null ? null : (
-            <Marker position={position} icon={customIcon} />
-        );
-    }
-
-    function LocationMover() {
-        const [Hoverposition, setHoverPosition] = useState(null);
-
-        useMapEvents({
-            mousemove(e) {
-                const coords = e.latlng;
-                setHoverPosition(coords)
-
-
-            },
-        });
-
-        return Hoverposition === null ? null : (
-            <Marker position={Hoverposition} icon={customIcon} />
-        );
-    }
+   
 
 
 
@@ -211,7 +232,7 @@ export const SubirPin = () => {
 
 
                         />
-
+                        
                         <LocationMarker />
                         <LocationMover />
 
@@ -252,7 +273,7 @@ export const SubirPin = () => {
                             <input
                                 type="radio"
                                 name="tipo"
-                                value="Automovilístico"
+                                value="automovilistico"
                                 onChange={(e) => setTipo(e.target.value)}
                                 required
                             /> Automovilístico
@@ -261,7 +282,7 @@ export const SubirPin = () => {
                             <input
                                 type="radio"
                                 name="tipo"
-                                value="Ciclístico"
+                                value="ciclista"
                                 onChange={(e) => setTipo(e.target.value)}
                             /> Ciclístico
                         </label>
@@ -269,7 +290,7 @@ export const SubirPin = () => {
                             <input
                                 type="radio"
                                 name="tipo"
-                                value="Peatón"
+                                value="peaton"
                                 onChange={(e) => setTipo(e.target.value)}
                             /> Peatón
                         </label>
@@ -284,11 +305,18 @@ export const SubirPin = () => {
                     </label>
 
                     <button type="submit" className="btn btn-primary btn-block" onClick={() => {
+                        
+                       
 
 
 
 
                     }}>Subir Reporte </button>
+
+                    <button onClick={()=>{
+                         console.log()
+
+                    }}>quien te pregunto</button>
                 </form>
             </div>
         </div>
