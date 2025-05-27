@@ -22,11 +22,12 @@ export const SubirPin = () => {
     const [descripcion, setDescripcion] = useState("");
     const [tipo, setTipo] = useState("");
     const [imagen, setImagen] = useState(null);
+    
 
     const customIcon = new L.Icon({
         iconUrl: "public/Logo-GuardianUrbano.png",
         iconSize: new L.Point(28, 38),
-        iconAnchor:  [10, 35]
+        iconAnchor: [10, 35]
     })
 
 
@@ -74,49 +75,66 @@ export const SubirPin = () => {
     }, [navigate]);
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
+        e.preventDefault()
+        const formData = new FormData();
+        formData.append('file', imagen);
+        formData.append('upload_preset', 'cocorroquias');
 
-        const token = sessionStorage.getItem("token");
-        if (!token) {
-            alert("Su sesión ha expirado. Por favor, inicie sesión nuevamente.");
-            navigate("/login");
-            return;
-        }
+        fetch("https://api.cloudinary.com/v1_1/dl3evwwwr/image/upload", { method: "POST", body: formData })
 
-        try {
-            const backendUrl = import.meta.env.VITE_BACKEND_URL;
-            const formData = new FormData();
-            formData.append('titulo', titulo);
-            formData.append('descripcion', descripcion);
-            formData.append('tipo', tipo);
+            .then((res) => res.json())
 
-            if (imagen) {
-                formData.append('imagen', imagen);
-            }
+            .then(async(datacloud) => {
+                
 
-            const response = await fetch(`${backendUrl}/subir-pin`, {
-                method: "POST",
-                headers: {
-                    "Authorization": `Bearer ${token}`
-                },
-                body: formData
-            });
+                const token = sessionStorage.getItem("token");
+                if (!token) {
+                    alert("Su sesión ha expirado. Por favor, inicie sesión nuevamente.");
+                    navigate("/login");
+                    return;
+                }
 
-            const data = await response.json();
+                try {
+                    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+                    const formData = new FormData();
+                    formData.append('titulo', titulo);
+                    formData.append('descripcion', descripcion);
+                    formData.append('tipo', tipo);
 
-            if (response.ok) {
-                alert("Reporte enviado exitosamente");
-                setTitulo("");
-                setDescripcion("");
-                setTipo("");
-                setImagen(null);
-            } else {
-                alert(data.msg || "Error al enviar el reporte");
-            }
-        } catch (error) {
-            console.error("Error:", error);
-            alert("Hubo un problema al enviar el reporte");
-        }
+                    if (imagen) {
+                        formData.append('imagen', datacloud.url);
+                    }
+
+                    const response = await fetch(`${backendUrl}/api/subir-pin`, {
+                        method: "POST",
+                        headers: {
+                            "Authorization": `Bearer ${token}`,
+                            "Content-Type": "application/json"
+                        },
+                        body: formData
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        alert("Reporte enviado exitosamente");
+                        setTitulo("");
+                        setDescripcion("");
+                        setTipo("");
+                        setImagen(null);
+                    } else {
+                        console.log(data.msg || "Error al enviar el reporte");
+                    }
+                } catch (error) {
+                    console.error("Error:", error);
+                    alert("Hubo un problema al enviar el reporte");
+                }
+
+            })
+
+            .catch()
+
+
     };
 
     if (showAuthMessage) {
@@ -165,6 +183,8 @@ export const SubirPin = () => {
             <Marker position={Hoverposition} icon={customIcon} />
         );
     }
+
+
 
 
 
@@ -263,7 +283,12 @@ export const SubirPin = () => {
                         />
                     </label>
 
-                    <button type="submit" className="btn btn-primary btn-block">Subir Reporte</button>
+                    <button type="submit" className="btn btn-primary btn-block" onClick={() => {
+
+
+
+
+                    }}>Subir Reporte </button>
                 </form>
             </div>
         </div>

@@ -12,13 +12,18 @@ function IncidentCard() {
 
 								<div className="col-8">
 									<h4> Crimen random</h4>
-									<p>Tipo de crimen: Automolistico</p>
+									<p>Tipo de crimen: Automolistico <br/>
+									   Reportado Por: Saul Goodman
+									</p>
 									<p> Descripción: Lorem, ipsum dolor sit amet consectetur adipisicing elit. Tempora ut rem cum sunt debitis blanditiis. Vel molestiae mollitia recusandae provident consequatur minima? Omnis similique illum ex beatae iure, quam dignissimos!</p>
+									
 									<div className="upvotes-downvotes">
 										<p className="me-auto">Upvotes: <bold>1.2M</bold></p> 
 										<button className="Incident-button"> <i class="fa-solid fa-angle-up"></i></button>
 										<button className="Incident-button"><i class="fa-solid fa-ban "></i></button>
+										
 										</div>
+										
 										
 
 
