@@ -310,7 +310,12 @@
 }
 
 .mapa-container {
-    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 800px;
+    height: auto;
 }
 
 .mapa-img {
@@ -442,6 +447,11 @@ button {
     border-top: 2px solid #ddd;
     background-color: #ffffff;
     border-radius: 8px;
+}
+.card-img-top {
+    width: 200px;
+    height: 150px;
+    object-fit: cover; 
 }
 
 

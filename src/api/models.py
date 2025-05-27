@@ -49,6 +49,7 @@ class User(db.Model):
 class Incidentes(db.Model):
     __tablename__= 'incidentes'
     id: Mapped[int] = mapped_column(primary_key= True)
+    titulo: Mapped[str] = mapped_column(String(), nullable = False)
     image: Mapped[str] = mapped_column(String(), nullable = False)
     longitud: Mapped[str] = mapped_column(String(), nullable = False)
     latitud: Mapped[str] = mapped_column(String(), nullable = False)
@@ -62,6 +63,7 @@ class Incidentes(db.Model):
     def serialize(self):
         return{
             'id': self.id,
+            'titulo': self.titulo,
             "image": self.image,
             "longitud": self.longitud,
             "latitud": self.latitud,
