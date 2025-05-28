@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-
+import Logo from "dist/Logo-GuardianUrbano.png"
 export const Navbar = () => {
     const navigate = useNavigate();
     const location = useLocation();
@@ -56,7 +56,7 @@ export const Navbar = () => {
         <nav className="navbar">
             {/* Icono Logo GuardianUrbano */}
             <div className="navbar-logo">
-                <img src="/dist/Logo-GuardianUrbano.png" alt="Logo" />
+                <img src={Logo} alt="Logo" />
             </div>
 
             <div className="navbar-links">
