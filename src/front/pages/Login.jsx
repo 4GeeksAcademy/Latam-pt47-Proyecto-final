@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { showSuccessAlert, showErrorAlert, showWarningAlert } from "../../utils/alerts";
 
 export const Login = () => {
   const navigate = useNavigate();
@@ -60,7 +61,7 @@ export const Login = () => {
           sessionStorage.setItem("user", JSON.stringify({ email: formData.email }));
         }
         
-        alert(data.msg || "Inicio de sesión exitoso");
+        showSuccessAlert("¡Bienvenido!", data.msg || "Inicio de sesión exitoso");
         navigate("/");
       } else {
         setError(data.msg || "Credenciales incorrectas");

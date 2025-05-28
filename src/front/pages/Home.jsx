@@ -82,7 +82,7 @@ const markers = [
 
 								<div className="overflow-y-scroll Incident-cards">
 									<IncidentCard/>
-									<IncidentCard/>
+									
 									
 									
 									
