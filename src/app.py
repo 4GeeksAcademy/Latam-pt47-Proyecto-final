@@ -22,8 +22,6 @@ from sqlalchemy.orm import joinedload
 from flask_mail import Mail, Message
 
 
-
-
 # from models import Person
 
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
@@ -91,6 +89,8 @@ def sitemap():
     return send_from_directory(static_file_dir, 'index.html')
 
 # any other endpoint will try to serve it like a static file
+
+
 @app.route('/<path:path>', methods=['GET'])
 def serve_any_other_file(path):
     if not os.path.isfile(os.path.join(static_file_dir, path)):
@@ -105,7 +105,7 @@ def signup():
     body = request.get_json(silent=True)
     if body is None:
         return jsonify({'msg': 'Debes enviar la información en el body'}), 400
-    
+
     # Verificar campos obligatorios
     if 'username' not in body:
         return jsonify({'msg': 'El campo username es obligatorio'}), 400
@@ -117,7 +117,7 @@ def signup():
         return jsonify({'msg': 'El campo email es obligatorio'}), 400
     if 'password' not in body:
         return jsonify({'msg': 'El campo password es obligatorio'}), 400
-    
+
     # Verificar si el email,phone,usuarios ya existe
     email_exists = User.query.filter_by(email=body['email']).first()
     if email_exists:
@@ -128,18 +128,19 @@ def signup():
     user_exists = User.query.filter_by(username=body['username']).first()
     if user_exists:
         return jsonify({'msg': 'El nombre de usuario ya está registrado'}), 400
-    
+
     # Crear nuevo usuario (is_active = True por defecto, is_admin = False por defecto)
     new_user = User(
         username=body['username'],
         name=body['name'],
         phone=body['phone'],
         email=body['email'],
-        password=bcrypt.generate_password_hash(body['password']).decode('utf-8'),
+        password=bcrypt.generate_password_hash(
+            body['password']).decode('utf-8'),
         is_active=True,
         is_admin=False
     )
-    
+
     # Guardar en la base de datos
     db.session.add(new_user)
     try:
@@ -151,29 +152,36 @@ def signup():
     except Exception as e:
         db.session.rollback()
         return jsonify({'msg': f'Error al registrar usuario: {str(e)}'}), 500
-    
+
 
 @app.route('/api/login', methods=['POST'])
 def login():
     body = request.get_json(silent=True)
     if body is None:
-      return jsonify({'msg': 'Debes enviar la informacion en el body'}), 400
+        return jsonify({'msg': 'Debes enviar la informacion en el body'}), 400
     if 'email' not in body:
-        return jsonify({'msg':'El campo email es obligatorio'}),400
+        return jsonify({'msg': 'El campo email es obligatorio'}), 400
     if 'password' not in body:
         return jsonify({'msg': "El campo password es obligatorio"}), 400
-    user = User.query.filter_by(email = body['email']).first()
+    user = User.query.filter_by(email=body['email']).first()
     if user is None:
-        return jsonify({'msg':'Email o contraseña invalidos'}), 400
-    #2 revisar si contraseña es correcta
-    password_valid = bcrypt.check_password_hash(user.password, body['password'])
+        return jsonify({'msg': 'Email o contraseña invalidos'}), 400
+    # 2 revisar si contraseña es correcta
+    password_valid = bcrypt.check_password_hash(
+        user.password, body['password'])
     if not password_valid:
         return jsonify({'msg': "Email o contraseña invalidos"}), 400
     if not user.is_active:
         return jsonify({'msg': "Usuario baneado. Por favor contacte a un administrador."}), 403
+
+    # 3 crear token
+    acces_token = create_access_token(identity=user.email)
+    return ({'msg': 'Estas logeado', 'token': acces_token}), 200
+  
     #3 crear token
-    acces_token = create_access_token(identity= user.email)
+    acces_token = create_access_token(identity= user.email , additional_claims={"user_id": user.id})
     return({'msg': 'Estas logeado', 'token': acces_token}), 200
+
 
 @app.route('/api/private', methods=['GET'])
 @jwt_required()
@@ -184,29 +192,31 @@ def private():
         return jsonify({'msg': 'Usuario no encontrado'}), 404
     return jsonify(user.serialize()), 200
 
+
 @app.route('/api/admin', methods=['GET'])
 @jwt_required()
 def admin_reported_incidents():
     current_user_email = get_jwt_identity()
     user = User.query.filter_by(email=current_user_email).first()
-    
+
     if not user or not user.is_active:
         return jsonify({'msg': 'Acceso denegado. Usuario baneado o eliminado.'}), 403
-    
+
     if not user.is_admin:
         return jsonify({'msg': 'Acceso denegado. Se requieren privilegios de administrador.'}), 403
-    
-    incidents = Incidentes.query.options(joinedload(Incidentes.reports).joinedload(Reports.user)).all()
-    
+
+    incidents = Incidentes.query.options(joinedload(
+        Incidentes.reports).joinedload(Reports.user)).all()
+
     reported_incidents = []
-    
+
     for incident in incidents:
         num_reports = len(incident.reports)
         num_likes = len(incident.likes)
-        
+
         if num_likes > 0:
             ratio = (num_reports / num_likes) * 100
-            
+
             if ratio >= 75:
                 incident_data = incident.serialize()
                 incident_data['num_reports'] = num_reports
@@ -220,9 +230,9 @@ def admin_reported_incidents():
                         'username': report.user.username if report.user else "Desconocido"
                     } for report in incident.reports
                 ]
-                
+
                 reported_incidents.append(incident_data)
-        
+
         elif num_reports > 0:
             incident_data = incident.serialize()
             incident_data['num_reports'] = num_reports
@@ -236,38 +246,39 @@ def admin_reported_incidents():
                     'user': report.user.username if report.user else "Desconocido"
                 } for report in incident.reports
             ]
-            
+
             reported_incidents.append(incident_data)
-    
+
     return jsonify({
-        'reported_incidents': reported_incidents, 
+        'reported_incidents': reported_incidents,
         'count': len(reported_incidents)
     })
 
-@app.route('/api/subir-pin', methods = ['POST'])
+
+@app.route('/api/subir-pin', methods=['POST'])
 def subirpin():
-    body = request.get_json(silent = True)
+    body = request.get_json(silent=True)
     if body is None:
-        return jsonify({'msg':'Debes enviar la informacion en el body'}), 400
+        return jsonify({'msg': 'Debes enviar la informacion en el body'}), 400
     if 'longitud' not in body:
-        return jsonify({'msg':'El campo longitud es obligatorio'}), 400
+        return jsonify({'msg': 'El campo longitud es obligatorio'}), 400
     if 'titulo' not in body:
-        return jsonify({'msg':'El campo titulo es obligatorio'}), 400
+        return jsonify({'msg': 'El campo titulo es obligatorio'}), 400
     if 'latitud' not in body:
-        return jsonify({'msg':'El campo latitud es obligatorio'}), 400
+        return jsonify({'msg': 'El campo latitud es obligatorio'}), 400
     if 'type' not in body:
-        return jsonify({'msg':'El campo type es obligatorio'}), 400
+        return jsonify({'msg': 'El campo type es obligatorio'}), 400
     if 'description' not in body:
-        return jsonify({'msg':'El campo description es obligatorio'}), 400
-    
+        return jsonify({'msg': 'El campo description es obligatorio'}), 400
+
     new_incident = Incidentes(
-        image = body['image'],
-        titulo = body['titulo'],
-        longitud = body['longitud'],
-        latitud = body['latitud'],
-        type = body['type'],
-        description = body['description'],
-        user_id = body['user_id'],
+        image=body['image'],
+        titulo=body['titulo'],
+        longitud=body['longitud'],
+        latitud=body['latitud'],
+        type=body['type'],
+        description=body['description'],
+        user_id=body['user_id'],
     )
 
     db.session.add(new_incident)
@@ -279,17 +290,18 @@ def subirpin():
         }), 201
     except Exception as e:
         db.session.rollback()
-        return jsonify({'msg':f'error al registrar incidente:{str(e)}'}),500
-    
-@app.route('/api/ban-user/<int:user_id>', methods = ['PUT'])
+        return jsonify({'msg': f'error al registrar incidente:{str(e)}'}), 500
+
+
+@app.route('/api/ban-user/<int:user_id>', methods=['PUT'])
 @jwt_required()
 def ban_user(user_id):
     user = User.query.get(user_id)
     admin_email = get_jwt_identity()
-    admin = User.query.filter_by(email = admin_email).first()
+    admin = User.query.filter_by(email=admin_email).first()
     if user.id == admin.id:
         return jsonify({'msg': 'No puedes banearte a ti mismo.'}), 400
-    
+
     user.is_active = False
 
     try:
@@ -309,9 +321,9 @@ def delete_incident(incident_id):
     incident = Incidentes.query.get(incident_id)
     if not incident:
         return jsonify({'msg': 'Incidente no encontrado'}), 404
-    
+
     db.session.delete(incident)
-    
+
     try:
         db.session.commit()
         return jsonify({
@@ -322,58 +334,65 @@ def delete_incident(incident_id):
         db.session.rollback()
         return jsonify({'msg': f'Error al eliminar incidente: {str(e)}'}), 500
 
+
 @app.route('/api/all-incidents', methods=['GET'])
 def all_incidentes():
-    incidents_query = Incidentes.query.all()    
+    incidents_query = Incidentes.query.all()
 
     response_body = {
         "msg": "Success",
         "results": list(map(lambda incident: incident.serialize(), incidents_query)),
     }
-    return jsonify(response_body),200
+    return jsonify(response_body), 200
 
-@app.route('/api/incidents/<string:type>',methods=['GET'])
+
+@app.route('/api/incidents/<string:type>', methods=['GET'])
 def get_incidents_by_type(type):
     incidents_query = Incidentes.query.filter_by(type=type).all()
     if not incidents_query:
-        return jsonify({'msg': f'No se encontraron incidentes del tipo "{type}"'}),404
-    
+        return jsonify({'msg': f'No se encontraron incidentes del tipo "{type}"'}), 404
+
     response_body = {
         'msg': 'Success',
         'results': list(map(lambda incident: incident.serialize(), incidents_query))
     }
-    return jsonify(response_body),200
+    return jsonify(response_body), 200
 
-@app.route('/api/incident/<int:incident_id>', methods=['GET'])
+
+@app.route('/api/like/<int:incident_id>', methods=['POST'])
 @jwt_required()
 def like_incident(incident_id):
     current_user_email = get_jwt_identity()
     user = User.query.filter_by(email=current_user_email).first()
-    existing_like = Likes.query.filter_by(user_id=user.id, incident_id=incident_id).first()
+    existing_like = Likes.query.filter_by(
+        user_id=user.id, incident_id=incident_id).first()
     if existing_like:
-       return jsonify({'msg': 'Ya has dado like a este incidente'}),400
-    
+        return jsonify({'msg': 'Ya has dado like a este incidente'}), 400
+
     new_like = Likes(user_id=user.id, incident_id=incident_id)
     db.session.add(new_like)
     try:
         db.session.commit()
-        return jsonify({'msg': 'Like agregado exitosamente'}), 201
+        updated_incident = Incidentes.query.get(incident_id)
+        return jsonify({'msg': 'Like agregado exitosamente', 'num_likes': len(updated_incident.likes)}), 201
     except Exception as e:
         db.session.rollback()
         return jsonify({'msg': f'Error al agregar like: {str(e)}'}), 500
-    
+
+
 @app.route('/api/report/<int:incident_id>', methods=['POST'])
 @jwt_required()
 def report_incident(incident_id):
     current_user_email = get_jwt_identity()
-    user = User.query.filter_by(email = current_user_email).first()
+    user = User.query.filter_by(email=current_user_email).first()
     body = request.get_json(silent=True)
     if not body or not body.get('reportType'):
         return jsonify({'msg': 'Debes elegir un tipo de reporte'}), 400
     if not body.get('description'):
         return jsonify({'msg': 'Debes ingresar una descripcion'}), 400
 
-    existing_report = Reports.query.filter_by(user_id = user.id, incident_id = incident_id).first()
+    existing_report = Reports.query.filter_by(
+        user_id=user.id, incident_id=incident_id).first()
     if existing_report:
         return jsonify({'msg': 'Ya has reportado este incidente'}), 400
 
@@ -386,34 +405,37 @@ def report_incident(incident_id):
     db.session.add(new_report)
     try:
         db.session.commit()
-        return jsonify({'msg': 'Reporte agregado exitosamente'}), 201
+        updated_incident = Incidentes.query.get(incident_id)
+        return jsonify({'msg': 'Reporte agregado exitosamente', 'num_reports': len(updated_incident.reports)}), 201
     except Exception as e:
         db.session.rollback()
-        return jsonify({'msg': f'Error al agregar reporte: {str(e)}'}), 500   
+        return jsonify({'msg': f'Error al agregar reporte: {str(e)}'}), 500
 
 
-@app.route('/api/send-mail', methods = ['GET'])
+@app.route('/api/send-mail', methods=['GET'])
 def send_mail():
-     msg = Message(
+    msg = Message(
         subject="Correo enviado en la clase",
         sender="guardianurbano.4geeks@gmail.com",
         recipients=["guardianurbano.4geeks@gmail.com"],
     )
-     msg.html = '<h1> Correo enviado desde la clase </h1>'
-     mail.send(msg)
-     return jsonify({'msg': 'Envie el correo'}), 200
+    msg.html = '<h1> Correo enviado desde la clase </h1>'
+    mail.send(msg)
+    return jsonify({'msg': 'Envie el correo'}), 200
+
 
 @app.route('/api/forgot-password', methods=['POST'])
 def forgot_password():
     body = request.get_json(silent=True)
     if not body or 'email' not in body:
         return jsonify({'msg': 'Debes enviar el email en el body'}), 400
-    
+
     user = User.query.filter_by(email=body['email']).first()
     if not user:
         return jsonify({'msg': 'Usuario no encontrado'}), 400
-    
-    reset_token = create_access_token(identity=user.email, expires_delta=timedelta(hours=1))
+
+    reset_token = create_access_token(
+        identity=user.email, expires_delta=timedelta(hours=1))
     reset_url = f'https://supreme-space-zebra-9vvgq57wq6w2x56g-3000.app.github.dev/reset-password?token={reset_token}'
 
     msg = Message(
@@ -433,12 +455,13 @@ def forgot_password():
     except Exception as e:
         return jsonify({'msg': f'Error al enviar correo: {str(e)}'}), 500
 
+
 @app.route('/api/reset-password', methods=['POST'])
 def reset_password():
     body = request.get_json(silent=True)
     if not body or 'token' not in body or 'new_password' not in body:
         return jsonify({'msg': 'Debes enviar el token y la nueva contraseña en el body'}), 400
-    
+
     try:
         decoded = decode_token(body['token'])
         user_email = decoded['sub']
@@ -447,18 +470,16 @@ def reset_password():
 
     user = User.query.filter_by(email=user_email).first()
     if not user:
-        return jsonify({'msg': 'Usuario no encontrado'}), 404    
-    
-    user.password = bcrypt.generate_password_hash(body['new_password']).decode('utf-8')
+        return jsonify({'msg': 'Usuario no encontrado'}), 404
+
+    user.password = bcrypt.generate_password_hash(
+        body['new_password']).decode('utf-8')
     try:
         db.session.commit()
         return jsonify({'msg': 'Contraseña actualizada exitosamente'}), 200
     except Exception as e:
         db.session.rollback()
         return jsonify({'msg': f'Error al actualizar contraseña: {str(e)}'}), 500
-
-
-
 
 
 # this only runs if `$ python src/main.py` is executed

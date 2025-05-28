@@ -24,20 +24,34 @@
 }
 
 .navbar-links a:hover {
-    color: #007bff; 
+    color: #064a87; 
 }
 
 
 .header-section {
-    background-color: #007bff; 
+    background-color: #064a87; 
     text-align: center;
     padding: 40px 20px;
 }
 
 .terminos {
-    background-color: #0b0b0b; 
-    text-align: center;
-    padding: 40px 20px;
+  background-color: #0b0b0b;
+  text-align: center;
+  padding: 40px 20px;
+
+  /* Top rounded corners */
+  border-top-left-radius: 1%;
+  border-top-right-radius: 1%;
+
+  /* Cancel Bootstrap .container padding (left & right) */
+  margin-left: -12px;
+  margin-right: -12px;
+
+
+ 
+
+  /* Optional cleanup */
+  box-sizing: border-box;
 }
 
 .header-section h1 {
@@ -52,7 +66,7 @@
 }
 
 .footer {
-    background-color: #007bff; 
+    background-color: #064a87; 
     color: white;
     padding: 20px;
     text-align: center;
@@ -97,12 +111,12 @@
 }
 
 .Titulo {
-    size:58px;
+    font-size:58px;
     color: white;
 }
 
 .texto_principal {
-    size:14px;
+    font-size:16px;
     color: white !important;
 }
 
@@ -144,15 +158,7 @@
   height: 800px;               /* fill viewport height */
   background: #f0f0f0;
 }
-.incidentcard-height {
-    max-height: 300px;
-    background-color: #064a87;
-    border-radius: 10px;
-    padding-bottom: 8px;
-    padding-top: 10px;
-    margin-bottom: 15px;
-    color:white;
-}
+
 
 .place_holder_map {
     width: 100%;
@@ -193,7 +199,7 @@
 }
 
 .SubTitle_Cards {
-    color: #0166ff;
+    color: #064a87;
     font-size: 18px;
 }
 
@@ -204,6 +210,11 @@
     display:flex;
     justify-content: center;
     align-items: center;
+    border-radius: 4%;
+    transition: transform 0.3s ease;
+}
+.card-section:hover{
+     transform: scale(1.1)
 }
 
 .fullheightcard {
@@ -278,7 +289,7 @@
 }
 
 .user-greeting {
-    color: #007bff;
+    color: #064a87;
     font-weight: bold;
     margin-right: 10px;
 }
@@ -316,6 +327,7 @@
     width: 100%;
     max-width: 800px;
     height: auto;
+    border-radius: 30%;
 }
 
 .mapa-img {
@@ -332,8 +344,8 @@
 
 .checkbox-group {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
+    
+    gap: 15px;
 }
 .textarea-container {
     display: flex;
@@ -454,6 +466,193 @@ button {
     object-fit: cover; 
 }
 
+/*css IncidentCard */
+
+
+.incident-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    padding: 15px;
+    margin: 15px auto;
+    max-width: 400px;
+    text-align: left;
+    transition: transform 0.3s ease-in-out;
+}
+
+.incident-card:hover {
+    transform: scale(1.03);
+}
+
+.incident-image {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.incident-info h4 {
+    margin: 10px 0;
+    font-size: 20px;
+    color: #333;
+}
+
+.incident-info p {
+    font-size: 16px;
+    color: #555;
+}
+
+.incident-stats {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.incident-stats p {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.upvotes-downvotes {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+.Incident-button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.Incident-button:hover {
+    background: #0056b3;
+}
+
+.incidentcard-height {
+    min-height: 100%;
+    width: 100%;
+    background-color: #05108d;
+    border-radius: 10px;
+    padding-bottom: 8px;
+    padding-top: 10px;
+    margin-bottom: 15px;
+    color:white;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+/* ReportModal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: rgb(3, 3, 130);
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+    width: 400px;
+    text-align: center;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+.modal-button {
+    background: #007bff;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 48%;
+    transition: background 0.3s ease;
+}
+
+.modal-button:hover {
+    background: #0056b3;
+=======
+.usertext{
+    size:3px;
+    padding-bottom: 0px;
+}
+
+.termino {
+    
+    background-color: white;
+}
+
+.terminos-page {
+    background-color: lightgrey;
+    margin: 0px, 0px, 0px, 0px !important;
+}
+
+.selectortipo {
+    height: 140px;
+    width: 140px;
+    transition: transform 0.3s ease
+
+}
+
+.selectortipo:hover {
+     transform: scale(1.1)
+}
 
 
 
+
+.simbol {
+    font-size: 50px;
+}
+
+.active {
+    background: darkgray;
+}
+
+.fileinput {
+  opacity: 0;
+  position: absolute;
+  width: 0.1px;
+  height: 0.1px;
+  z-index: -1;
+}
+
+.uploadfile {
+  font-size: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100px;
+  border: 1px solid grey;
+  border-radius: 12px; /* perfect circle */
+  
+  transition: background-color 0.3s;
+}
+
+.uploadfile:hover {
+  background-color: #f0f0f0;
+
+}

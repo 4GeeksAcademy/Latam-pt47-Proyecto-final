@@ -82,7 +82,7 @@ const markers = [
 
 								<div className="overflow-y-scroll Incident-cards">
 									<IncidentCard/>
-									<IncidentCard/>
+									
 									
 									
 									
@@ -91,7 +91,7 @@ const markers = [
 							</div>
 
 							<div class="col">
-								<MapContainer center={[4.60971, -74.08175]} zoom ={13}  style={{ height: "100%", width: "100%" }} >
+								<MapContainer center={[4.60971, -74.08175]} zoom ={13}  style={{ height: "100%", width: "100%" , borderRadius: "5%" }} >
 									<TileLayer
 
 									url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

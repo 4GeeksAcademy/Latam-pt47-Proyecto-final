@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
+import { showSuccessAlert, showErrorAlert, showWarningAlert } from "../../utils/alerts";
 
 export const Moderador = () => {
     const [reportes, setReportes] = useState([]);
@@ -53,8 +54,10 @@ export const Moderador = () => {
             if (!response.ok) throw new Error("Error al eliminar reporte");
 
             setReportes(reportes.filter(reporte => reporte.id !== id));
+            showSuccessAlert("Reporte eliminado", "El reporte ha sido eliminado correctamente.");
         } catch (error) {
             console.error("Error al eliminar reporte:", error);
+            showErrorAlert("Error", "No se pudo eliminar el reporte. Intenta de nuevo.");
         }
     };
 
@@ -67,8 +70,10 @@ export const Moderador = () => {
             });
 
             if (!response.ok) throw new Error("Error al banear usuario");
+            showSuccessAlert("Usuario baneado", "El usuario ha sido baneado exitosamente.");
         } catch (error) {
             console.error("Error al banear usuario:", error);
+            showErrorAlert("Error", "No se pudo banear al usuario. Intenta de nuevo.");
         }
     };
 

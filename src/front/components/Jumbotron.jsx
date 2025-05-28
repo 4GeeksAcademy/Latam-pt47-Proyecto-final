@@ -15,7 +15,7 @@ export const Jumbotron = () => {
 									GuardianUrbano</h1>
 								<p className="texto_principal"> Marcá el peligro. Protegé a otros. Compartí tu experiencia y ayudá a crear un entorno más seguro para todos. Entre todos, hacemos visible lo que muchas veces se ignora.</p>
 								<div>
-									<button type="button" class="boton_jumbotron inline-block">Registrate</button>
+									<button type="button" className="boton_jumbotron inline-block">Registrate</button>
 								</div>
 
 							</div>

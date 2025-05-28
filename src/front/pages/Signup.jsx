@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { showSuccessAlert, showErrorAlert, showWarningAlert } from "../../utils/alerts";
 
 export const Signup = () => {
     const navigate = useNavigate();
@@ -52,7 +53,7 @@ export const Signup = () => {
             const data = await response.json();
             
             if (response.ok) {
-                alert(data.msg || "Usuario registrado exitosamente");
+                showSuccessAlert("¡Bienvenido!", data.msg || "Inicio de sesión exitoso");
                 navigate("/login");
             } else {
                 setError(data.msg || "Error al registrarse");
@@ -66,11 +67,14 @@ export const Signup = () => {
     };
 
     return (
-        <div className="container">
+        <div>
             <div className="header-section">
                 <h1>Registrate</h1>
                 <p>Crea una cuenta e ingresa sesión en GuardianUrbano</p>
             </div>
+            
+            <div className="container">
+            
             <div className="row justify-content-center">
                 <div className="col-md-6">
                     <div className="card my-4">
@@ -170,5 +174,7 @@ export const Signup = () => {
                 </div>
             </div>
         </div>
+        </div>
+        
     );
 };

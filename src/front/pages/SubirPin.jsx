@@ -10,6 +10,7 @@ import {
 import L from "leaflet"
 import { Icon } from "leaflet"
 import 'leaflet/dist/leaflet.css';
+import { jwtDecode } from "jwt-decode";
 
 
 
@@ -22,118 +23,18 @@ export const SubirPin = () => {
     const [descripcion, setDescripcion] = useState("");
     const [tipo, setTipo] = useState("");
     const [imagen, setImagen] = useState(null);
+    const [position, setPosition] = useState(null)
+    const[imgurl, setImgurl] = useState(null)
+    const[userdata, setUserdata] = useState(null)
 
     const customIcon = new L.Icon({
         iconUrl: "dist/Logo-GuardianUrbano.png",
         iconSize: new L.Point(28, 38),
-        iconAnchor:  [10, 35]
+        iconAnchor: [10, 35]
     })
 
-
-    useEffect(() => {
-        const token = sessionStorage.getItem("token");
-        if (!token) {
-            setShowAuthMessage(true);
-            setTimeout(() => {
-                navigate("/login", { replace: true });
-            }, 2000);
-            return;
-        }
-
-        const checkAuthentication = async () => {
-            try {
-                const backendUrl = import.meta.env.VITE_BACKEND_URL;
-                const response = await fetch(`${backendUrl}/api/private`, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
-                    }
-                });
-
-                if (response.ok) {
-                    setIsAuthenticated(true);
-                } else {
-                    sessionStorage.removeItem("token");
-                    sessionStorage.removeItem("user");
-                    setShowAuthMessage(true);
-                    setTimeout(() => {
-                        navigate("/login", { replace: true });
-                    }, 2000);
-                }
-            } catch (error) {
-                console.error("Error de autenticación:", error);
-                setShowAuthMessage(true);
-                setTimeout(() => {
-                    navigate("/login", { replace: true });
-                }, 2000);
-            }
-        };
-
-        checkAuthentication();
-    }, [navigate]);
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        const token = sessionStorage.getItem("token");
-        if (!token) {
-            alert("Su sesión ha expirado. Por favor, inicie sesión nuevamente.");
-            navigate("/login");
-            return;
-        }
-
-        try {
-            const backendUrl = import.meta.env.VITE_BACKEND_URL;
-            const formData = new FormData();
-            formData.append('titulo', titulo);
-            formData.append('descripcion', descripcion);
-            formData.append('tipo', tipo);
-
-            if (imagen) {
-                formData.append('imagen', imagen);
-            }
-
-            const response = await fetch(`${backendUrl}/subir-pin`, {
-                method: "POST",
-                headers: {
-                    "Authorization": `Bearer ${token}`
-                },
-                body: formData
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                alert("Reporte enviado exitosamente");
-                setTitulo("");
-                setDescripcion("");
-                setTipo("");
-                setImagen(null);
-            } else {
-                alert(data.msg || "Error al enviar el reporte");
-            }
-        } catch (error) {
-            console.error("Error:", error);
-            alert("Hubo un problema al enviar el reporte");
-        }
-    };
-
-    if (showAuthMessage) {
-        return (
-            <div className="alert alert-warning text-center mt-5">
-                Debes estar logueado para subir un pin. Redirigiendo al login...
-            </div>
-        );
-    }
-
-    if (!isAuthenticated) {
-        return null;
-    }
-
-
-    function LocationMarker() {
-        const [position, setPosition] = useState(null);
+     function LocationMarker() {
+        
 
         useMapEvents({
             click(e) {
@@ -159,12 +60,153 @@ export const SubirPin = () => {
 
 
             },
+
+            mouseout() {
+                setHoverPosition(null)
+            }
         });
 
         return Hoverposition === null ? null : (
             <Marker position={Hoverposition} icon={customIcon} />
         );
     }
+
+
+    useEffect(() => {
+        const token = sessionStorage.getItem("token");
+       
+        
+
+        if (!token) {
+            setShowAuthMessage(true);
+            setTimeout(() => {
+                navigate("/login", { replace: true });
+            }, 2000);
+            return;
+        }
+
+        const checkAuthentication = async () => {
+            try {
+                const backendUrl = import.meta.env.VITE_BACKEND_URL;
+                const response = await fetch(`${backendUrl}/api/private`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    setUserdata(jwtDecode(token))
+                    setIsAuthenticated(true);
+                } else {
+                    sessionStorage.removeItem("token");
+                    sessionStorage.removeItem("user");
+                    setShowAuthMessage(true);
+                    setTimeout(() => {
+                        navigate("/login", { replace: true });
+                    }, 2000);
+                }
+            } catch (error) {
+                console.error("Error de autenticación:", error);
+                setShowAuthMessage(true);
+                setTimeout(() => {
+                    navigate("/login", { replace: true });
+                }, 2000);
+            }
+        };
+
+        checkAuthentication();
+    }, [navigate]);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        const formData = new FormData();
+        formData.append('file', imagen);
+        formData.append('upload_preset', 'cocorroquias');
+
+        fetch("https://api.cloudinary.com/v1_1/dl3evwwwr/image/upload", { method: "POST", body: formData })
+
+            .then((res) => res.json())
+
+            .then(async(datacloud) => {
+                setImgurl(datacloud.url)
+                console.log(imgurl)
+                
+
+                const token = sessionStorage.getItem("token");
+                if (!token) {
+                    alert("Su sesión ha expirado. Por favor, inicie sesión nuevamente.");
+                    navigate("/login");
+                    return;
+                }
+
+                try {
+                    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+                    const jsonpayload = {
+                        "titulo": titulo, 
+                        "longitud": position.lng,
+                        "latitud":position.lat,
+                        "type":  tipo,
+                        "description": descripcion,
+                        "image" : datacloud.url,
+                        "user_id": userdata.user_id,
+                        "image": datacloud.url ?? null
+
+
+                    }
+
+                   
+
+                    const response = await fetch(`${backendUrl}/api/subir-pin`, {
+                        method: "POST",
+                        headers: {
+                            "Authorization": `Bearer ${token}`,
+                            "Content-Type": "application/json"
+                            
+                        },
+                        body: JSON.stringify(jsonpayload)
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        alert("Reporte enviado exitosamente");
+                        setTitulo("");
+                        setDescripcion("");
+                        setTipo("");
+                        setImagen(null);
+                    } else {
+                        console.log(data.msg || "Error al enviar el reporte");
+                    }
+                } catch (error) {
+                    console.error("Error:", error);
+                    alert("Hubo un problema al enviar el reporte");
+                }
+
+            })
+
+            .catch()
+
+
+    };
+
+    if (showAuthMessage) {
+        return (
+            <div className="alert alert-warning text-center mt-5">
+                Debes estar logueado para subir un pin. Redirigiendo al login...
+            </div>
+        );
+    }
+
+    if (!isAuthenticated) {
+        return null;
+    }
+
+
+   
+
+
 
 
 
@@ -176,22 +218,22 @@ export const SubirPin = () => {
 
 
     return (
-        <div className="subir-pin">
+        <div className="subir-pin  ">
             <header className="header-section text-center py-4">
                 <h1 className="text-white">Subir Pin</h1>
                 <p className="text-white">No dejes que la inseguridad pase desapercibida.</p>
             </header>
 
-            <div className="container subir-pin-container">
+            <div className="container subir-pin-container mt-5 mb-5">
                 <div className="mapa-container">
-                    <MapContainer center={[4.60971, -74.08175]} zoom={13} style={{ height: "97vh", width: "100%" }} >
+                    <MapContainer center={[4.60971, -74.08175]} zoom={13} style={{ height: "83vh", width: "100%" , borderRadius: "5%"}} >
                         <TileLayer
 
                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
 
 
                         />
-
+                        
                         <LocationMarker />
                         <LocationMover />
 
@@ -199,7 +241,7 @@ export const SubirPin = () => {
                     </MapContainer>
                 </div>
 
-                <form className="form-container" onSubmit={handleSubmit}>
+                <form className="form-container mt-4" onSubmit={handleSubmit}>
                     <div className="input-container">
                         <p><strong>Marca tu incidente en la plataforma.</strong></p>
                         <label htmlFor="titulo">
@@ -228,42 +270,59 @@ export const SubirPin = () => {
 
                     <label>Tipo de Incidente:</label>
                     <div className="checkbox-group">
-                        <label>
-                            <input
-                                type="radio"
-                                name="tipo"
-                                value="Automovilístico"
-                                onChange={(e) => setTipo(e.target.value)}
-                                required
-                            /> Automovilístico
-                        </label>
-                        <label>
-                            <input
-                                type="radio"
-                                name="tipo"
-                                value="Ciclístico"
-                                onChange={(e) => setTipo(e.target.value)}
-                            /> Ciclístico
-                        </label>
-                        <label>
-                            <input
-                                type="radio"
-                                name="tipo"
-                                value="Peatón"
-                                onChange={(e) => setTipo(e.target.value)}
-                            /> Peatón
-                        </label>
+                        <button  type= "button" className={`selectortipo ${tipo === "automovilistico" ? "active" : ""}`} onClick={(()=> {
+                            setTipo("automovilistico")
+                         })}>
+                            <i class="fa-solid fa-car simbol "></i>
+                            Automovilistico
+                            
+
+                        </button>
+
+                        <button  type="button" className= {`selectortipo ${tipo === "ciclista" ? "active" : ""}`} onClick={()=>{
+                            setTipo("ciclista")
+                        }}>
+                            <i class="fa-solid fa-bicycle simbol"></i>
+                            Ciclistico
+
+                        </button>
+
+                        <button  type="button" className= {`selectortipo ${tipo === "peaton" ? "active" : ""}`} onClick = {()=> {
+                            setTipo("peaton")
+                        }}>
+                            <i class="fa-solid fa-person-walking simbol me-auto" ></i>
+                            Peaton/Otro..
+
+                        </button>
                     </div>
 
                     <label>
-                        Subir imagen (opcional):
-                        <input
+                        <div>Subir imagen (opcional):
+                            <div className='uploadfile'>
+                                <i class="fa-solid fa-upload"></i>
+                            </div>
+
+                            <p>File: {imagen ? imagen.name : "Ningún archivo seleccionado"}</p>
+                        </div>
+                        
+                        <input className='fileinput'
                             type="file"
-                            onChange={(e) => setImagen(e.target.files[0])}
+                            onChange={(e) => setImagen(e.target.files[0])
+                                
+                            }
                         />
                     </label>
 
-                    <button type="submit" className="btn btn-primary btn-block">Subir Reporte</button>
+                    <button type="submit" className="btn btn-primary btn-block" onClick={() => {
+                        
+                       
+
+
+
+
+                    }}>Subir Reporte </button>
+
+                    
                 </form>
             </div>
         </div>
