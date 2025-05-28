@@ -74,7 +74,7 @@ export const SubirPin = () => {
 
     useEffect(() => {
         const token = sessionStorage.getItem("token");
-        setUserdata(jwtDecode(token))
+       
         
 
         if (!token) {
@@ -97,6 +97,7 @@ export const SubirPin = () => {
                 });
 
                 if (response.ok) {
+                    setUserdata(jwtDecode(token))
                     setIsAuthenticated(true);
                 } else {
                     sessionStorage.removeItem("token");
@@ -217,15 +218,15 @@ export const SubirPin = () => {
 
 
     return (
-        <div className="subir-pin">
+        <div className="subir-pin  ">
             <header className="header-section text-center py-4">
                 <h1 className="text-white">Subir Pin</h1>
                 <p className="text-white">No dejes que la inseguridad pase desapercibida.</p>
             </header>
 
-            <div className="container subir-pin-container">
+            <div className="container subir-pin-container mt-5 mb-5">
                 <div className="mapa-container">
-                    <MapContainer center={[4.60971, -74.08175]} zoom={13} style={{ height: "97vh", width: "100%" }} >
+                    <MapContainer center={[4.60971, -74.08175]} zoom={13} style={{ height: "83vh", width: "100%" , borderRadius: "5%"}} >
                         <TileLayer
 
                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -240,7 +241,7 @@ export const SubirPin = () => {
                     </MapContainer>
                 </div>
 
-                <form className="form-container" onSubmit={handleSubmit}>
+                <form className="form-container mt-4" onSubmit={handleSubmit}>
                     <div className="input-container">
                         <p><strong>Marca tu incidente en la plataforma.</strong></p>
                         <label htmlFor="titulo">
@@ -269,38 +270,46 @@ export const SubirPin = () => {
 
                     <label>Tipo de Incidente:</label>
                     <div className="checkbox-group">
-                        <label>
-                            <input
-                                type="radio"
-                                name="tipo"
-                                value="automovilistico"
-                                onChange={(e) => setTipo(e.target.value)}
-                                required
-                            /> Automovilístico
-                        </label>
-                        <label>
-                            <input
-                                type="radio"
-                                name="tipo"
-                                value="ciclista"
-                                onChange={(e) => setTipo(e.target.value)}
-                            /> Ciclístico
-                        </label>
-                        <label>
-                            <input
-                                type="radio"
-                                name="tipo"
-                                value="peaton"
-                                onChange={(e) => setTipo(e.target.value)}
-                            /> Peatón
-                        </label>
+                        <button  type= "button" className={`selectortipo ${tipo === "automovilistico" ? "active" : ""}`} onClick={(()=> {
+                            setTipo("automovilistico")
+                         })}>
+                            <i class="fa-solid fa-car simbol "></i>
+                            Automovilistico
+                            
+
+                        </button>
+
+                        <button  type="button" className= {`selectortipo ${tipo === "ciclista" ? "active" : ""}`} onClick={()=>{
+                            setTipo("ciclista")
+                        }}>
+                            <i class="fa-solid fa-bicycle simbol"></i>
+                            Ciclistico
+
+                        </button>
+
+                        <button  type="button" className= {`selectortipo ${tipo === "peaton" ? "active" : ""}`} onClick = {()=> {
+                            setTipo("peaton")
+                        }}>
+                            <i class="fa-solid fa-person-walking simbol me-auto" ></i>
+                            Peaton/Otro..
+
+                        </button>
                     </div>
 
                     <label>
-                        Subir imagen (opcional):
-                        <input
+                        <div>Subir imagen (opcional):
+                            <div className='uploadfile'>
+                                <i class="fa-solid fa-upload"></i>
+                            </div>
+
+                            <p>File: {imagen ? imagen.name : "Ningún archivo seleccionado"}</p>
+                        </div>
+                        
+                        <input className='fileinput'
                             type="file"
-                            onChange={(e) => setImagen(e.target.files[0])}
+                            onChange={(e) => setImagen(e.target.files[0])
+                                
+                            }
                         />
                     </label>
 
@@ -313,10 +322,7 @@ export const SubirPin = () => {
 
                     }}>Subir Reporte </button>
 
-                    <button onClick={()=>{
-                         console.log()
-
-                    }}>quien te pregunto</button>
+                    
                 </form>
             </div>
         </div>
