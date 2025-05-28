@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import Logo from "dist/Logo-GuardianUrbano.png"
+import Logo from "../assets/Logo-GuardianUrbano.png"
 export const Navbar = () => {
     const navigate = useNavigate();
     const location = useLocation();
