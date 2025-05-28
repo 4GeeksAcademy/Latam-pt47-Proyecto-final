@@ -172,7 +172,7 @@ def login():
     if not user.is_active:
         return jsonify({'msg': "Usuario baneado. Por favor contacte a un administrador."}), 403
     #3 crear token
-    acces_token = create_access_token(identity= user.email)
+    acces_token = create_access_token(identity= user.email , additional_claims={"user_id": user.id})
     return({'msg': 'Estas logeado', 'token': acces_token}), 200
 
 @app.route('/api/private', methods=['GET'])
