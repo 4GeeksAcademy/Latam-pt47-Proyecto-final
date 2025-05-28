@@ -69,7 +69,9 @@ class Incidentes(db.Model):
             "latitud": self.latitud,
             "type": self.type,
             "description": self.description,
-            "user_id": self.user_id
+            "user_id": self.user_id,
+            "num_likes": len(self.likes),  
+            "num_reports": len(self.reports)
         }
 
 
