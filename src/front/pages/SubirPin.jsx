@@ -24,7 +24,7 @@ export const SubirPin = () => {
     const [imagen, setImagen] = useState(null);
 
     const customIcon = new L.Icon({
-        iconUrl: "public/Logo-GuardianUrbano.png",
+        iconUrl: "dist/Logo-GuardianUrbano.png",
         iconSize: new L.Point(28, 38),
         iconAnchor:  [10, 35]
     })

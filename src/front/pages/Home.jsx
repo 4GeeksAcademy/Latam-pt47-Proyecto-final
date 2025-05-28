@@ -56,7 +56,7 @@ const markers = [
     {position: [4.61171, -74.08175]},]
 
 	const customIcon = new L.Icon({
-			iconUrl: "public/Logo-GuardianUrbano.png",
+			iconUrl: "dist/Logo-GuardianUrbano.png",
 			iconSize: new L.Point(28, 38),
 			iconAnchor:  [10, 35]})
 

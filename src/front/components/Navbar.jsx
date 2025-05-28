@@ -56,7 +56,7 @@ export const Navbar = () => {
         <nav className="navbar">
             {/* Icono Logo GuardianUrbano */}
             <div className="navbar-logo">
-                <img src="/public/Logo-GuardianUrbano.png" alt="Logo" />
+                <img src="/dist/Logo-GuardianUrbano.png" alt="Logo" />
             </div>
 
             <div className="navbar-links">

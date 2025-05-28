@@ -85,7 +85,7 @@ export const Moderador = () => {
                     <div key={incident.id} className="incidente-box">
                         <div className="incidente-info">
                             <h3>{incident.type}</h3>
-                            <img src={incident.image ? incident.image : "/public/Logo-GuardianUrbano.png"}
+                            <img src={incident.image ? incident.image : "/dist/Logo-GuardianUrbano.png"}
                                 className="card-img-top"
                                 alt="Reporte"
                             />
