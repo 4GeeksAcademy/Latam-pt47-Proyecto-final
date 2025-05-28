@@ -24,20 +24,34 @@
 }
 
 .navbar-links a:hover {
-    color: #007bff; 
+    color: #064a87; 
 }
 
 
 .header-section {
-    background-color: #007bff; 
+    background-color: #064a87; 
     text-align: center;
     padding: 40px 20px;
 }
 
 .terminos {
-    background-color: #0b0b0b; 
-    text-align: center;
-    padding: 40px 20px;
+  background-color: #0b0b0b;
+  text-align: center;
+  padding: 40px 20px;
+
+  /* Top rounded corners */
+  border-top-left-radius: 1%;
+  border-top-right-radius: 1%;
+
+  /* Cancel Bootstrap .container padding (left & right) */
+  margin-left: -12px;
+  margin-right: -12px;
+
+
+ 
+
+  /* Optional cleanup */
+  box-sizing: border-box;
 }
 
 .header-section h1 {
@@ -52,7 +66,7 @@
 }
 
 .footer {
-    background-color: #007bff; 
+    background-color: #064a87; 
     color: white;
     padding: 20px;
     text-align: center;
@@ -97,12 +111,12 @@
 }
 
 .Titulo {
-    size:58px;
+    font-size:58px;
     color: white;
 }
 
 .texto_principal {
-    size:14px;
+    font-size:16px;
     color: white !important;
 }
 
@@ -185,7 +199,7 @@
 }
 
 .SubTitle_Cards {
-    color: #0166ff;
+    color: #064a87;
     font-size: 18px;
 }
 
@@ -196,6 +210,11 @@
     display:flex;
     justify-content: center;
     align-items: center;
+    border-radius: 4%;
+    transition: transform 0.3s ease;
+}
+.card-section:hover{
+     transform: scale(1.1)
 }
 
 .fullheightcard {
@@ -270,7 +289,7 @@
 }
 
 .user-greeting {
-    color: #007bff;
+    color: #064a87;
     font-weight: bold;
     margin-right: 10px;
 }
@@ -308,6 +327,7 @@
     width: 100%;
     max-width: 800px;
     height: auto;
+    border-radius: 30%;
 }
 
 .mapa-img {
@@ -324,8 +344,8 @@
 
 .checkbox-group {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
+    
+    gap: 15px;
 }
 .textarea-container {
     display: flex;
@@ -447,6 +467,7 @@ button {
 }
 
 /*css IncidentCard */
+
 
 .incident-card {
     background: #fff;
@@ -572,4 +593,66 @@ button {
 
 .modal-button:hover {
     background: #0056b3;
+=======
+.usertext{
+    size:3px;
+    padding-bottom: 0px;
+}
+
+.termino {
+    
+    background-color: white;
+}
+
+.terminos-page {
+    background-color: lightgrey;
+    margin: 0px, 0px, 0px, 0px !important;
+}
+
+.selectortipo {
+    height: 140px;
+    width: 140px;
+    transition: transform 0.3s ease
+
+}
+
+.selectortipo:hover {
+     transform: scale(1.1)
+}
+
+
+
+
+.simbol {
+    font-size: 50px;
+}
+
+.active {
+    background: darkgray;
+}
+
+.fileinput {
+  opacity: 0;
+  position: absolute;
+  width: 0.1px;
+  height: 0.1px;
+  z-index: -1;
+}
+
+.uploadfile {
+  font-size: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100px;
+  border: 1px solid grey;
+  border-radius: 12px; /* perfect circle */
+  
+  transition: background-color 0.3s;
+}
+
+.uploadfile:hover {
+  background-color: #f0f0f0;
+
 }

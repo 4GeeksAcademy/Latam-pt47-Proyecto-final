@@ -67,11 +67,14 @@ export const Signup = () => {
     };
 
     return (
-        <div className="container">
+        <div>
             <div className="header-section">
                 <h1>Registrate</h1>
                 <p>Crea una cuenta e ingresa sesión en GuardianUrbano</p>
             </div>
+            
+            <div className="container">
+            
             <div className="row justify-content-center">
                 <div className="col-md-6">
                     <div className="card my-4">
@@ -171,5 +174,7 @@ export const Signup = () => {
                 </div>
             </div>
         </div>
+        </div>
+        
     );
 };

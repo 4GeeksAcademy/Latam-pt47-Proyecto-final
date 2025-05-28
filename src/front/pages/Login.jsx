@@ -75,18 +75,20 @@ export const Login = () => {
   };
 
   return (
-    <div className="container">
-      <div className="header-section">
+    <div>
+      <div className="header-section mb-5">
         <h1>Login</h1>
         <p>Inicia sesión o crea una cuenta en GuardianUrbano</p>
       </div>
-      <div className="row justify-content-center">
+    <div className="container">
+      
+      <div className="row justify-content-center mb-5 mt-5">
         <div className="col-md-6">
           <div className="card my-4">
             <div className="card-body">
               {error && <div className="alert alert-danger">{error}</div>}
               <form onSubmit={handleLogin}>
-                <div className="mb-3">
+                <div className="mb-5">
                   <label htmlFor="email" className="form-label">Correo electrónico</label>
                   <input
                     type="email"
@@ -98,7 +100,7 @@ export const Login = () => {
                     required
                   />
                 </div>
-                <div className="mb-3">
+                <div className="mb-5">
                   <label htmlFor="password" className="form-label">Contraseña</label>
                   <input
                     type="password"
@@ -125,11 +127,13 @@ export const Login = () => {
               </div>
             </div>
           </div>
-          <div className="text-center mb-4">
+          <div className="text-center mb-5">
             <p>¿No tienes una cuenta? <Link to="/signup">Registro</Link></p>
           </div>
         </div>
       </div>
     </div>
+    </div>
+    
   );
 };

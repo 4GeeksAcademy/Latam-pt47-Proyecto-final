@@ -50,7 +50,7 @@ class Incidentes(db.Model):
     __tablename__= 'incidentes'
     id: Mapped[int] = mapped_column(primary_key= True)
     titulo: Mapped[str] = mapped_column(String(), nullable = False)
-    image: Mapped[str] = mapped_column(String(), nullable = False)
+    image: Mapped[str] = mapped_column(String(), nullable = True)
     longitud: Mapped[str] = mapped_column(String(), nullable = False)
     latitud: Mapped[str] = mapped_column(String(), nullable = False)
     type: Mapped[TipoIncidente]   = mapped_column(Enum(TipoIncidente), nullable = False)
