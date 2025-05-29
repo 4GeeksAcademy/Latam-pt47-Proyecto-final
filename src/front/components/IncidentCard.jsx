@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ReportModal from "./ReportModal";
+import { showSuccessAlert, showErrorAlert, showWarningAlert } from "../../utils/alerts";
 
 function IncidentCard() {
 	const [incidentes, setIncidentes] = useState([]);
@@ -20,25 +21,6 @@ function IncidentCard() {
 				const data = await response.json();
 				console.log("API Response:", data);
 
-
-
-								<div className="col-8">
-									<h4> Crimen random</h4>
-									<p>Tipo de crimen: Automolistico <br/>
-									   Reportado Por: Saul Goodman
-									</p>
-									<p> Descripción: Lorem, ipsum dolor sit amet consectetur adipisicing elit. Tempora ut rem cum sunt debitis blanditiis. Vel molestiae mollitia recusandae provident consequatur minima? Omnis similique illum ex beatae iure, quam dignissimos!</p>
-									
-									<div className="upvotes-downvotes">
-										<p className="me-auto">Upvotes: <bold>1.2M</bold></p> 
-										<button className="Incident-button"> <i class="fa-solid fa-angle-up"></i></button>
-										<button className="Incident-button"><i class="fa-solid fa-ban "></i></button>
-										
-										</div>
-										
-										
-
-
 				if (!Array.isArray(data.results)) {
 					throw new Error("La API no devolvió un array.");
 				}
@@ -52,52 +34,52 @@ function IncidentCard() {
 		fetchIncidents();
 	}, [backendUrl]);
 
-    const handleLike = async (incidentId) => {
-        if (!token) {
-            navigate("/login");
-            return;
-        }
+	const handleLike = async (incidentId) => {
+		if (!token) {
+			navigate("/login");
+			return;
+		}
 
-        try {
-            const response = await fetch(`${backendUrl}/api/like/${incidentId}`, {
-                method: "POST",
-                headers: { 
-					"Authorization": `Bearer ${token}`, 
-			        "Content-Type": "application/json",
-			    }
-            });
+		try {
+			const response = await fetch(`${backendUrl}/api/like/${incidentId}`, {
+				method: "POST",
+				headers: {
+					"Authorization": `Bearer ${token}`,
+					"Content-Type": "application/json",
+				}
+			});
 
-            if (!response.ok) {
+			if (!response.ok) {
 				const errorData = await response.json();
 				throw new Error(errorData.msg || "Error desconocido");
 			}
 			const updatedData = await response.json();
 
-            setIncidentes((prevIncidentes) =>
-                prevIncidentes.map((inc) =>
-                    inc.id === incidentId ? { ...inc, num_likes: updatedData.num_likes } : inc
-                )
-            );
-			alert("Like agregado correctamente!");
-        } catch (error) {
-            console.error("Error al dar like:", error);
-			alert(`Hubo un problema al agregar el Like: ${error.message}`)
-        }
-    };
+			setIncidentes((prevIncidentes) =>
+				prevIncidentes.map((inc) =>
+					inc.id === incidentId ? { ...inc, num_likes: updatedData.num_likes } : inc
+				)
+			);
+			showSuccessAlert("Like agregado correctamente!", "Gracias tu Like se ha registrado correctamente.");
+		} catch (error) {
+			console.error("Error al dar like:", error);
+			showErrorAlert("Error", `Hubo un problema al agregar el Like: ${error.message}`);
+		}
+	};
 
 	const handleReportClick = (incident) => {
-        if (!token) {
-            navigate("/login");
-            return;
-        }
+		if (!token) {
+			navigate("/login");
+			return;
+		}
 
 		if (!incident) {
 			console.error("Error: Incidente no encontrado.");
 			return;
 		}
-        setSelectedIncident(incident);
-        setIsModalOpen(true);
-    };
+		setSelectedIncident(incident);
+		setIsModalOpen(true);
+	};
 
 	return (
 		<div className="container incidentcard-height">
@@ -125,11 +107,11 @@ function IncidentCard() {
 					</div>
 				</div>
 			))}
-			<ReportModal isOpen={isModalOpen} 
-			onClose={() => setIsModalOpen(false)} 
-			incident={selectedIncident} token={token} 
-			backendUrl={backendUrl} 
-			setIncidentes={setIncidentes}
+			<ReportModal isOpen={isModalOpen}
+				onClose={() => setIsModalOpen(false)}
+				incident={selectedIncident} token={token}
+				backendUrl={backendUrl}
+				setIncidentes={setIncidentes}
 			/>
 		</div>
 	)
