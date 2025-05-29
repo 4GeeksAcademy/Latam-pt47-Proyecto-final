@@ -4,7 +4,7 @@ import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { Link } from "react-router-dom";
 import IncidentCard from "../components/IncidentCard.jsx";
 import Jumbotron from "../components/Jumbotron.jsx";
-
+import Logo from "../assets/img/Logo-GuardianUrbano.png"
 
 import {
 	MapContainer,
@@ -56,7 +56,7 @@ const markers = [
     {position: [4.61171, -74.08175]},]
 
 	const customIcon = new L.Icon({
-			iconUrl: "dist/Logo-GuardianUrbano.png",
+			iconUrl: {Logo},
 			iconSize: new L.Point(28, 38),
 			iconAnchor:  [10, 35]})
 

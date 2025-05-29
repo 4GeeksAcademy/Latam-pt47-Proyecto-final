@@ -28,7 +28,7 @@ export const SubirPin = () => {
     const[userdata, setUserdata] = useState(null)
 
     const customIcon = new L.Icon({
-        iconUrl: "dist/Logo-GuardianUrbano.png",
+        iconUrl: "/assets/img/Logo-GuardianUrbano.png",
         iconSize: new L.Point(28, 38),
         iconAnchor: [10, 35]
     })
@@ -149,10 +149,8 @@ export const SubirPin = () => {
                         "latitud":position.lat,
                         "type":  tipo,
                         "description": descripcion,
-                        "image" : datacloud.url,
-                        "user_id": userdata.user_id,
-                        "image": datacloud.url ?? null
-
+                        "image": datacloud.url ?? null,
+                        "user_id": userdata.user_id
 
                     }
 
