@@ -28,6 +28,7 @@ ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
 static_file_dir = os.path.join(os.path.dirname(
     os.path.realpath(__file__)), '../public/')
 app = Flask(__name__)
+CORS(app)
 
 app.config.update(dict(
     DEBUG=False,
@@ -175,8 +176,8 @@ def login():
         return jsonify({'msg': "Usuario baneado. Por favor contacte a un administrador."}), 403
 
     # 3 crear token
-    acces_token = create_access_token(identity=user.email)
-    return ({'msg': 'Estas logeado', 'token': acces_token}), 200
+    acces_token = create_access_token(identity=user.email, additional_claims={"user_name": user.username} )
+    return ({'msg': 'Estas logeado', 'token': acces_token }), 200
   
     #3 crear token
     acces_token = create_access_token(identity= user.email , additional_claims={"user_id": user.id})
@@ -256,6 +257,7 @@ def admin_reported_incidents():
 
 
 @app.route('/api/subir-pin', methods=['POST'])
+@jwt_required()
 def subirpin():
     body = request.get_json(silent=True)
     if body is None:
@@ -270,6 +272,14 @@ def subirpin():
         return jsonify({'msg': 'El campo type es obligatorio'}), 400
     if 'description' not in body:
         return jsonify({'msg': 'El campo description es obligatorio'}), 400
+    
+    current_user_email = get_jwt_identity()
+
+   
+    user = User.query.filter_by(email=current_user_email).first()
+    if not user:
+        return jsonify({'msg': 'Usuario no encontrado'}), 404
+
 
     new_incident = Incidentes(
         image=body['image'],
@@ -278,7 +288,7 @@ def subirpin():
         latitud=body['latitud'],
         type=body['type'],
         description=body['description'],
-        user_id=body['user_id'],
+        user_id= user.id,
     )
 
     db.session.add(new_incident)

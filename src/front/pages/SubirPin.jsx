@@ -150,7 +150,6 @@ export const SubirPin = () => {
                         "type":  tipo,
                         "description": descripcion,
                         "image" : datacloud.url,
-                        "user_id": userdata.user_id,
                         "image": datacloud.url ?? null
 
 
@@ -177,7 +176,7 @@ export const SubirPin = () => {
                         setTipo("");
                         setImagen(null);
                     } else {
-                        console.log(data.msg || "Error al enviar el reporte");
+                        console.log(data.msg || stringify(jsonpayload));
                     }
                 } catch (error) {
                     console.error("Error:", error);
