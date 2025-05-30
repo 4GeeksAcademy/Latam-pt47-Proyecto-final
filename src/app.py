@@ -174,10 +174,6 @@ def login():
         return jsonify({'msg': "Email o contraseña invalidos"}), 400
     if not user.is_active:
         return jsonify({'msg': "Usuario baneado. Por favor contacte a un administrador."}), 403
-
-    # 3 crear token
-    acces_token = create_access_token(identity=user.email, additional_claims={"user_name": user.username} )
-    return ({'msg': 'Estas logeado', 'token': acces_token }), 200
   
     #3 crear token
     acces_token = create_access_token(identity= user.email , additional_claims={"user_id": user.id})
@@ -355,7 +351,6 @@ def all_incidentes():
     }
     return jsonify(response_body), 200
 
-
 @app.route('/api/incidents/<string:type>', methods=['GET'])
 def get_incidents_by_type(type):
     incidents_query = Incidentes.query.filter_by(type=type).all()
@@ -446,7 +441,10 @@ def forgot_password():
 
     reset_token = create_access_token(
         identity=user.email, expires_delta=timedelta(hours=1))
-    reset_url = f'https://supreme-space-zebra-9vvgq57wq6w2x56g-3000.app.github.dev/reset-password?token={reset_token}'
+    frontend-recuperar-contraseña
+    vite_frontend_url = os.getenv('VITE_FRONTEND_URL', 'http://localhost:3000')
+    reset_url = f'{vite_frontend_url}/reset-password?token={reset_token}'
+
 
     msg = Message(
         subject="Recuperación de contraseña",
