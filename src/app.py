@@ -441,7 +441,7 @@ def forgot_password():
 
     reset_token = create_access_token(
         identity=user.email, expires_delta=timedelta(hours=1))
-    frontend-recuperar-contraseña
+    
     vite_frontend_url = os.getenv('VITE_FRONTEND_URL', 'http://localhost:3000')
     reset_url = f'{vite_frontend_url}/reset-password?token={reset_token}'
 
