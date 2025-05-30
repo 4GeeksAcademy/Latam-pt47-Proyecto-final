@@ -173,10 +173,10 @@ def login():
         return jsonify({'msg': "Email o contraseña invalidos"}), 400
     if not user.is_active:
         return jsonify({'msg': "Usuario baneado. Por favor contacte a un administrador."}), 403
-    # 3 crear token
-    acces_token = create_access_token(
-        identity=user.email, additional_claims={"user_id": user.id})
-    return ({'msg': 'Estas logeado', 'token': acces_token}), 200
+  
+    #3 crear token
+    acces_token = create_access_token(identity= user.email , additional_claims={"user_id": user.id})
+    return({'msg': 'Estas logeado', 'token': acces_token}), 200
 
 
 @app.route('/api/private', methods=['GET'])
@@ -341,7 +341,6 @@ def all_incidentes():
     }
     return jsonify(response_body), 200
 
-
 @app.route('/api/incidents/<string:type>', methods=['GET'])
 def get_incidents_by_type(type):
     incidents_query = Incidentes.query.filter_by(type=type).all()
@@ -369,7 +368,8 @@ def like_incident(incident_id):
     db.session.add(new_like)
     try:
         db.session.commit()
-        return jsonify({'msg': 'Like agregado exitosamente'}), 201
+        updated_incident = Incidentes.query.get(incident_id)
+        return jsonify({'msg': 'Like agregado exitosamente', 'num_likes': len(updated_incident.likes)}), 201
     except Exception as e:
         db.session.rollback()
         return jsonify({'msg': f'Error al agregar like: {str(e)}'}), 500
@@ -400,7 +400,8 @@ def report_incident(incident_id):
     db.session.add(new_report)
     try:
         db.session.commit()
-        return jsonify({'msg': 'Reporte agregado exitosamente'}), 201
+        updated_incident = Incidentes.query.get(incident_id)
+        return jsonify({'msg': 'Reporte agregado exitosamente', 'num_reports': len(updated_incident.reports)}), 201
     except Exception as e:
         db.session.rollback()
         return jsonify({'msg': f'Error al agregar reporte: {str(e)}'}), 500
@@ -430,8 +431,10 @@ def forgot_password():
 
     reset_token = create_access_token(
         identity=user.email, expires_delta=timedelta(hours=1))
+    frontend-recuperar-contraseña
     vite_frontend_url = os.getenv('VITE_FRONTEND_URL', 'http://localhost:3000')
     reset_url = f'{vite_frontend_url}/reset-password?token={reset_token}'
+
 
     msg = Message(
         subject="Recuperación de contraseña",

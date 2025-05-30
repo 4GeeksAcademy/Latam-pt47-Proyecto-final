@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { showSuccessAlert, showErrorAlert, showWarningAlert } from "../../utils/alerts";
 
 export const Signup = () => {
     const navigate = useNavigate();
@@ -52,7 +53,7 @@ export const Signup = () => {
             const data = await response.json();
             
             if (response.ok) {
-                alert(data.msg || "Usuario registrado exitosamente");
+                showSuccessAlert("¡Bienvenido!", data.msg || "Inicio de sesión exitoso");
                 navigate("/login");
             } else {
                 setError(data.msg || "Error al registrarse");

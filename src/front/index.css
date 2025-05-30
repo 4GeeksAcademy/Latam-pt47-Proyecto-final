@@ -158,15 +158,7 @@
   height: 800px;               /* fill viewport height */
   background: #f0f0f0;
 }
-.incidentcard-height {
-    max-height: 300px;
-    background-color: #064a87;
-    border-radius: 10px;
-    padding-bottom: 8px;
-    padding-top: 10px;
-    margin-bottom: 15px;
-    color:white;
-}
+
 
 .place_holder_map {
     width: 100%;
@@ -474,7 +466,134 @@ button {
     object-fit: cover; 
 }
 
+/*css IncidentCard */
 
+
+.incident-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    padding: 15px;
+    margin: 15px auto;
+    max-width: 400px;
+    text-align: left;
+    transition: transform 0.3s ease-in-out;
+}
+
+.incident-card:hover {
+    transform: scale(1.03);
+}
+
+.incident-image {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.incident-info h4 {
+    margin: 10px 0;
+    font-size: 20px;
+    color: #333;
+}
+
+.incident-info p {
+    font-size: 16px;
+    color: #555;
+}
+
+.incident-stats {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.incident-stats p {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.upvotes-downvotes {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+.Incident-button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.Incident-button:hover {
+    background: #0056b3;
+}
+
+.incidentcard-height {
+    min-height: 100%;
+    width: 100%;
+    background-color: #05108d;
+    border-radius: 10px;
+    padding-bottom: 8px;
+    padding-top: 10px;
+    margin-bottom: 15px;
+    color:white;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+/* ReportModal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: rgb(3, 3, 130);
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+    width: 400px;
+    text-align: center;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+.modal-button {
+    background: #007bff;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 48%;
+    transition: background 0.3s ease;
+}
+
+.modal-button:hover {
+    background: #0056b3;
+}
 .usertext{
     size:3px;
     padding-bottom: 0px;
@@ -535,4 +654,5 @@ button {
 
 .uploadfile:hover {
   background-color: #f0f0f0;
+
 }
