@@ -68,6 +68,7 @@ class Incidentes(db.Model):
             "longitud": self.longitud,
             "latitud": self.latitud,
             "type": self.type,
+            "username": self.user.username if self.user else None, 
             "description": self.description,
             "user_id": self.user_id,
             "num_likes": len(self.likes),  

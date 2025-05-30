@@ -53,7 +53,7 @@ const ReportModal = ({ isOpen, onClose, incident, token, backendUrl, setIncident
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                 <h3>Reportar: {incident?.titulo}</h3>
                 <form onSubmit={handleReport}>
-                    <label>Tipo de Reporte:</label>
+                    <label className="me-2">Tipo de Reporte:</label>
                     <select value={reportType} onChange={(e) => setReportType(e.target.value)} required>
                         <option value="">Seleccionar...</option>
                         <option value="contenido_inapropiado">Contenido Inapropiado</option>
@@ -66,7 +66,7 @@ const ReportModal = ({ isOpen, onClose, incident, token, backendUrl, setIncident
                     <label>Descripción:</label>
                     <textarea value={description} onChange={(e) => setDescription(e.target.value)} required></textarea>
 
-                    <button type="submit">Enviar Reporte</button>
+                    <button type="submit" className="me-3">Enviar Reporte</button>
                     <button onClick={onClose}>Cancelar</button>
                 </form>
             </div>
