@@ -91,7 +91,7 @@ export const Moderador = () => {
                             />
                             <p><strong>Descripción:</strong> {incident.description}</p>
                             <p><strong>Ubicación:</strong> Lat: {incident.latitud}, Lng: {incident.longitud}</p>
-                            <p><strong>Usuario que creó:</strong> {incident.username || "Desconocido"}</p>
+                            <p><strong>Usuario que creó:</strong> {incident.user || "Desconocido"}</p>
                             <p><strong>Likes:</strong> {incident.num_likes}</p>
                             <p><strong>Reportes:</strong> {incident.num_reports}</p>
 
