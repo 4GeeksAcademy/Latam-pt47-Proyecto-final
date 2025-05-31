@@ -343,11 +343,11 @@ def delete_incident(incident_id):
 
 @app.route('/api/all-incidents', methods=['GET'])
 def all_incidentes():
-    incidents_query = Incidentes.query.all()
+    incidents_query = Incidentes.query.options(joinedload(Incidentes.user)).all()
 
     response_body = {
         "msg": "Success",
-        "results": list(map(lambda incident: incident.serialize(), incidents_query)),
+        "results": [incident.serialize() for incident in incidents_query]
     }
     return jsonify(response_body), 200
 
@@ -441,7 +441,7 @@ def forgot_password():
 
     reset_token = create_access_token(
         identity=user.email, expires_delta=timedelta(hours=1))
-    
+
     vite_frontend_url = os.getenv('VITE_FRONTEND_URL', 'http://localhost:3000')
     reset_url = f'{vite_frontend_url}/reset-password?token={reset_token}'
 

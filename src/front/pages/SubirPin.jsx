@@ -11,6 +11,7 @@ import L from "leaflet"
 import { Icon } from "leaflet"
 import 'leaflet/dist/leaflet.css';
 import { jwtDecode } from "jwt-decode";
+import { showSuccessAlert, showErrorAlert, showWarningAlert } from "../../utils/alerts";
 
 
 
@@ -24,8 +25,8 @@ export const SubirPin = () => {
     const [tipo, setTipo] = useState("");
     const [imagen, setImagen] = useState(null);
     const [position, setPosition] = useState(null)
-    const[imgurl, setImgurl] = useState(null)
-    const[userdata, setUserdata] = useState(null)
+    const [imgurl, setImgurl] = useState(null)
+    const [userdata, setUserdata] = useState(null)
 
     const customIcon = new L.Icon({
         iconUrl: "public/Logo-GuardianUrbano.png",
@@ -33,8 +34,8 @@ export const SubirPin = () => {
         iconAnchor: [10, 35]
     })
 
-     function LocationMarker() {
-        
+    function LocationMarker() {
+
 
         useMapEvents({
             click(e) {
@@ -74,8 +75,8 @@ export const SubirPin = () => {
 
     useEffect(() => {
         const token = sessionStorage.getItem("token");
-       
-        
+
+
 
         if (!token) {
             setShowAuthMessage(true);
@@ -129,14 +130,14 @@ export const SubirPin = () => {
 
             .then((res) => res.json())
 
-            .then(async(datacloud) => {
+            .then(async (datacloud) => {
                 setImgurl(datacloud.url)
                 console.log(imgurl)
-                
+
 
                 const token = sessionStorage.getItem("token");
                 if (!token) {
-                    alert("Su sesión ha expirado. Por favor, inicie sesión nuevamente.");
+                    showWarningAlert("Su sesión ha expirado.", "Por favor, inicie sesión nuevamente.");
                     navigate("/login");
                     return;
                 }
@@ -144,25 +145,22 @@ export const SubirPin = () => {
                 try {
                     const backendUrl = import.meta.env.VITE_BACKEND_URL;
                     const jsonpayload = {
-                        "titulo": titulo, 
+                        "titulo": titulo,
                         "longitud": position.lng,
-                        "latitud":position.lat,
-                        "type":  tipo,
+                        "latitud": position.lat,
+                        "type": tipo,
                         "description": descripcion,
-                        "image" : datacloud.url,
                         "image": datacloud.url ?? null
-
-
                     }
 
-                   
+
 
                     const response = await fetch(`${backendUrl}/api/subir-pin`, {
                         method: "POST",
                         headers: {
                             "Authorization": `Bearer ${token}`,
                             "Content-Type": "application/json"
-                            
+
                         },
                         body: JSON.stringify(jsonpayload)
                     });
@@ -170,7 +168,10 @@ export const SubirPin = () => {
                     const data = await response.json();
 
                     if (response.ok) {
-                        alert("Reporte enviado exitosamente");
+                        showSuccessAlert("Incidente Creado", "El Incidente ha sido enviado correctamente.");
+                        setTimeout(() => {
+                            navigate("/");
+                        }, 2000);
                         setTitulo("");
                         setDescripcion("");
                         setTipo("");
@@ -180,7 +181,7 @@ export const SubirPin = () => {
                     }
                 } catch (error) {
                     console.error("Error:", error);
-                    alert("Hubo un problema al enviar el reporte");
+                    showErrorAlert("Error", "Hubo un problema al enviar el reporte.");
                 }
 
             })
@@ -203,7 +204,7 @@ export const SubirPin = () => {
     }
 
 
-   
+
 
 
 
@@ -225,14 +226,14 @@ export const SubirPin = () => {
 
             <div className="container subir-pin-container mt-5 mb-5">
                 <div className="mapa-container">
-                    <MapContainer center={[4.60971, -74.08175]} zoom={13} style={{ height: "83vh", width: "100%" , borderRadius: "5%"}} >
+                    <MapContainer center={[4.60971, -74.08175]} zoom={13} style={{ height: "83vh", width: "100%", borderRadius: "5%" }} >
                         <TileLayer
 
                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
 
 
                         />
-                        
+
                         <LocationMarker />
                         <LocationMover />
 
@@ -242,7 +243,7 @@ export const SubirPin = () => {
 
                 <form className="form-container mt-4" onSubmit={handleSubmit}>
                     <div className="input-container">
-                        <p><strong>Marca tu incidente en la plataforma.</strong></p>
+                        <h3><strong>Marca tu incidente en la plataforma.</strong></h3>
                         <label htmlFor="titulo">
                             Título del Incidente:
                         </label>
@@ -269,16 +270,16 @@ export const SubirPin = () => {
 
                     <label>Tipo de Incidente:</label>
                     <div className="checkbox-group">
-                        <button  type= "button" className={`selectortipo ${tipo === "automovilistico" ? "active" : ""}`} onClick={(()=> {
+                        <button type="button" className={`selectortipo ${tipo === "automovilistico" ? "active" : ""}`} onClick={(() => {
                             setTipo("automovilistico")
-                         })}>
+                        })}>
                             <i class="fa-solid fa-car simbol "></i>
                             Automovilistico
-                            
+
 
                         </button>
 
-                        <button  type="button" className= {`selectortipo ${tipo === "ciclista" ? "active" : ""}`} onClick={()=>{
+                        <button type="button" className={`selectortipo ${tipo === "ciclista" ? "active" : ""}`} onClick={() => {
                             setTipo("ciclista")
                         }}>
                             <i class="fa-solid fa-bicycle simbol"></i>
@@ -286,7 +287,7 @@ export const SubirPin = () => {
 
                         </button>
 
-                        <button  type="button" className= {`selectortipo ${tipo === "peaton" ? "active" : ""}`} onClick = {()=> {
+                        <button type="button" className={`selectortipo ${tipo === "peaton" ? "active" : ""}`} onClick={() => {
                             setTipo("peaton")
                         }}>
                             <i class="fa-solid fa-person-walking simbol me-auto" ></i>
@@ -303,25 +304,25 @@ export const SubirPin = () => {
 
                             <p>File: {imagen ? imagen.name : "Ningún archivo seleccionado"}</p>
                         </div>
-                        
+
                         <input className='fileinput'
                             type="file"
                             onChange={(e) => setImagen(e.target.files[0])
-                                
+
                             }
                         />
                     </label>
 
                     <button type="submit" className="btn btn-primary btn-block" onClick={() => {
-                        
-                       
+
+
 
 
 
 
                     }}>Subir Reporte </button>
 
-                    
+
                 </form>
             </div>
         </div>
