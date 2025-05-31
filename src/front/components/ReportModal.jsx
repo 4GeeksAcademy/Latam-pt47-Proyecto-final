@@ -58,7 +58,7 @@ const ReportModal = ({ isOpen, onClose, incident, token, backendUrl, setIncident
                         <option value="">Seleccionar...</option>
                         <option value="contenido_inapropiado">Contenido Inapropiado</option>
                         <option value="informacion_falsa">Información Falsa</option>
-                        <option value="incidente_irrelevante">Incidente Irrelevante</option>
+                        <option value="incidente_irreleante">Incidente Irrelevante</option>
                         <option value="lenguaje_ofensivo">Lenguaje Ofensivo</option>
                         <option value="spam">Spam</option>
                     </select>

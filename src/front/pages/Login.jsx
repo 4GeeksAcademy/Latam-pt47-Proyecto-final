@@ -135,7 +135,7 @@ export const Login = () => {
 
         
         showSuccessAlert("¡Bienvenido!", data.msg || "Inicio de sesión exitoso");
-     development
+     
         navigate("/");
       } else {
         setError(data.msg || "Credenciales incorrectas");

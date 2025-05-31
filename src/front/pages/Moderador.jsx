@@ -89,14 +89,15 @@ export const Moderador = () => {
                 {reportes.map((incident) => (
                     <div key={incident.id} className="incidente-box">
                         <div className="incidente-info">
-                            <h3>{incident.type}</h3>
+                            <h3>{incident.titulo}</h3>
                             <img src={incident.image ? incident.image : "/public/Logo-GuardianUrbano.png"}
                                 className="card-img-top"
                                 alt="Reporte"
                             />
+                            <p><strong>Tipo: {incident.type}</strong></p>
                             <p><strong>Descripción:</strong> {incident.description}</p>
                             <p><strong>Ubicación:</strong> Lat: {incident.latitud}, Lng: {incident.longitud}</p>
-                            <p><strong>Usuario que creó:</strong> {incident.user || "Desconocido"}</p>
+                            <p><strong>Usuario que creó:</strong> {incident.username}</p>
                             <p><strong>Likes:</strong> {incident.num_likes}</p>
                             <p><strong>Reportes:</strong> {incident.num_reports}</p>
 
@@ -110,7 +111,7 @@ export const Moderador = () => {
                                 <ul>
                                     {incident.reports.map((report) => (
                                         <li key={report.id}>
-                                            <p><strong>Usuario:</strong> {report.user}</p>
+                                            <p><strong>Usuario que reporto:</strong> {report.username}</p>
                                             <p><strong>Motivo:</strong> {report.type}</p>
                                             <p><strong>Descripción:</strong> {report.description}</p>
                                         </li>
