@@ -174,10 +174,11 @@ def login():
         return jsonify({'msg': "Email o contraseña invalidos"}), 400
     if not user.is_active:
         return jsonify({'msg': "Usuario baneado. Por favor contacte a un administrador."}), 403
-  
-    #3 crear token
-    acces_token = create_access_token(identity= user.email , additional_claims={"user_id": user.id})
-    return({'msg': 'Estas logeado', 'token': acces_token}), 200
+
+    # 3 crear token
+    acces_token = create_access_token(
+        identity=user.email, additional_claims={"user_id": user.id})
+    return ({'msg': 'Estas logeado', 'token': acces_token}), 200
 
 
 @app.route('/api/private', methods=['GET'])
@@ -268,14 +269,12 @@ def subirpin():
         return jsonify({'msg': 'El campo type es obligatorio'}), 400
     if 'description' not in body:
         return jsonify({'msg': 'El campo description es obligatorio'}), 400
-    
+
     current_user_email = get_jwt_identity()
 
-   
     user = User.query.filter_by(email=current_user_email).first()
     if not user:
         return jsonify({'msg': 'Usuario no encontrado'}), 404
-
 
     new_incident = Incidentes(
         image=body['image'],
@@ -284,7 +283,7 @@ def subirpin():
         latitud=body['latitud'],
         type=body['type'],
         description=body['description'],
-        user_id= user.id,
+        user_id=user.id,
     )
 
     db.session.add(new_incident)
@@ -350,6 +349,7 @@ def all_incidentes():
         "results": [incident.serialize() for incident in incidents_query]
     }
     return jsonify(response_body), 200
+
 
 @app.route('/api/incidents/<string:type>', methods=['GET'])
 def get_incidents_by_type(type):
@@ -445,18 +445,27 @@ def forgot_password():
     vite_frontend_url = os.getenv('VITE_FRONTEND_URL', 'http://localhost:3000')
     reset_url = f'{vite_frontend_url}/reset-password?token={reset_token}'
 
-
     msg = Message(
         subject="Recuperación de contraseña",
         sender="guardianurbano.4geeks@gmail.com",
         recipients=[user.email],
     )
     msg.html = f"""
-        <h3>Recuperación de contraseña</h3>
-        <p>Haz clic en el siguiente enlace para restablecer tu contraseña:</p>
-        <a href="{reset_url}">{reset_url}</a>
-        <p>Este enlace expirará en 1 hora</p>
-    """
+    <h2>Solicitud de restablecimiento de contraseña</h2>
+    <p>Hola {user.name},</p>
+    <p>Hemos recibido una solicitud para restablecer la contraseña de tu cuenta en Guardian Urbano.</p>
+    <p>Para crear una nueva contraseña, haz clic en el siguiente enlace:</p>
+    <p><a href="{reset_url}" style="color: #3366cc;">Restablecer contraseña</a></p>
+    <p>Si el botón anterior no funciona, copia y pega el siguiente enlace en tu navegador:</p>
+    <p>{reset_url}</p>
+    <p><strong>Nota:</strong> Este enlace expirará en 1 hora por motivos de seguridad.</p>
+    <p>Si no solicitaste este cambio, puedes ignorar este correo y tu contraseña permanecerá igual.</p>
+    <br>
+    <p>Saludos cordiales,<br>El equipo de Guardian Urbano</p>
+    <div style="text-align:left; margin-top:20px;">
+        <img src="https://res.cloudinary.com/daby6jdf1/image/upload/v1748802567/Logo-GuardianUrbano_1_kj1bnl.png" alt="Guardian Urbano" style="width:60px;" />
+    </div>
+"""
     try:
         mail.send(msg)
         return jsonify({'msg': 'Correo de recuperación enviado'}), 200
