@@ -573,13 +573,14 @@ button {
 }
 
 .modal-content {
-    background: #064a87;
+    background: white;
     padding: 25px;
     border-radius: 12px;
     box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
     width: 400px;
     text-align: center;
     animation: fadeIn 0.3s ease-in-out;
+    color: black;
 }
 
 @keyframes fadeIn {
@@ -606,6 +607,18 @@ button {
 .modal-button:hover {
     background: #0056b3;
 }
+.form-control {
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 16px;
+}
+
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0px 0px 8px rgba(0, 123, 255, 0.5);
+}
+/*------*/
+
 .usertext{
     size:3px;
     padding-bottom: 0px;
@@ -631,9 +644,6 @@ button {
 .selectortipo:hover {
      transform: scale(1.1)
 }
-
-
-
 
 .simbol {
     font-size: 50px;

@@ -1,9 +1,17 @@
 import React, { useState } from "react";
+import Select from "react-select";
 import { showSuccessAlert, showErrorAlert, showWarningAlert } from "../../utils/alerts";
 
 const ReportModal = ({ isOpen, onClose, incident, token, backendUrl, setIncidentes }) => {
     const [reportType, setReportType] = useState("");
     const [description, setDescription] = useState("");
+    const options = [
+        { value: "contenido_inapropiado", label: "Contenido Inapropiado" },
+        { value: "informacion_falsa", label: "Información Falsa" },
+        { value: "incidente_irreleante", label: "Incidente Irrelevante" }, //el value hay que dejarlo asi con ese error de sintaxis "irreleante", sino no funciona en el backend.
+        { value: "lenguaje_ofensivo", label: "Lenguaje Ofensivo" },
+        { value: "spam", label: "Spam" }
+    ];
 
     const handleReport = async (e) => {
         e.preventDefault();
@@ -47,27 +55,43 @@ const ReportModal = ({ isOpen, onClose, incident, token, backendUrl, setIncident
 
     if (!isOpen) return null;
 
+    const handleClose = () => {
+        setDescription("");
+        onClose();
+    };
+
     return (
 
-        <div className="modal-overlay" onClick={onClose}>
+        <div className="modal-overlay" onClick={handleClose}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                <img src={incident.image ?? "public/Logo-GuardianUrbano.png"}
+                    className="modal-image"
+                    alt="Incidente"
+                />
                 <h3>Reportar: {incident?.titulo}</h3>
                 <form onSubmit={handleReport}>
-                    <label className="me-2">Tipo de Reporte:</label>
-                    <select value={reportType} onChange={(e) => setReportType(e.target.value)} required>
-                        <option value="">Seleccionar...</option>
-                        <option value="contenido_inapropiado">Contenido Inapropiado</option>
-                        <option value="informacion_falsa">Información Falsa</option>
-                        <option value="incidente_irrelevante">Incidente Irrelevante</option>
-                        <option value="lenguaje_ofensivo">Lenguaje Ofensivo</option>
-                        <option value="spam">Spam</option>
-                    </select>
+                    <Select
+                        options={options}
+                        onChange={(selectedOption) => setReportType(selectedOption.value)}
+                        className="w-full"
+                        placeholder="Seleccionar..."
+                    />
+                    <br></br>
+                    <div className="form-floating">
+                        <p>Describe el motivo del reporte:</p>
+                        <textarea
+                            placeholder="Describe el motivo del reporte."
+                            className="form-control"
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                            id="floatingTextarea"
+                            style={{ height: "100px" }}
+                            required>
+                        </textarea>
+                    </div>
 
-                    <label>Descripción:</label>
-                    <textarea value={description} onChange={(e) => setDescription(e.target.value)} required></textarea>
-
-                    <button type="submit" className="me-3">Enviar Reporte</button>
-                    <button onClick={onClose}>Cancelar</button>
+                    <button type="submit" className="btn btn-primary me-3"><i class="fa-solid fa-paper-plane"></i>  Enviar Reporte</button>
+                    <button className="btn btn-danger" onClick={handleClose}>Cancelar</button>
                 </form>
             </div>
         </div>
