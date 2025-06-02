@@ -7,7 +7,13 @@
     border-bottom: 2px solid #ddd;
 }   
 
+.navbar-logo  {
+    display: flex;
+    height: 60px; 
+}
+
 .navbar-logo img {
+    display: flex;
     height: 60px; 
 }
 
@@ -68,7 +74,7 @@
 .footer {
     background-color: #064a87; 
     color: white;
-    padding: 20px;
+    padding: 30px;
     text-align: center;
 }
 
@@ -83,7 +89,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    font-size: 1.2rem;
+    font-size: 1.8rem;
 }
 
 .footer a {
@@ -116,7 +122,7 @@
 }
 
 .texto_principal {
-    font-size:16px;
+    font-size:18px;
     color: white !important;
 }
 
@@ -141,6 +147,7 @@
     background-color: #064a87;
     color:white;
     border: none;
+    font-size: 18px;
 }
 
 .fullfit {
@@ -205,7 +212,7 @@
 
 .SubTitle_Cards {
     color: #064a87;
-    font-size: 18px;
+    font-size: 23px;
 }
 
 .card-section{
@@ -286,9 +293,9 @@
 }
 
 .incident-image {
+    display: block;
     height:260px;
-    width:auto; 
-    max-width: 320px;
+    width: 330px !important;
     border-radius: 10px;
     object-fit: cover;
 }

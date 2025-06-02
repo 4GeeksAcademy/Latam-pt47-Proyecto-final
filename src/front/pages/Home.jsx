@@ -56,8 +56,8 @@ export const Home = () => {
 
 	const [isactive, setIsactive] = useState(null)
 	const [mapcenter, setmapcenter] = useState([4.60971, -74.08175])
-	
-	useEffect(()=> {})
+
+	useEffect(() => { })
 
 	const createCustomIcon = (marker) => {
 		return L.divIcon({
@@ -71,11 +71,11 @@ export const Home = () => {
 	function MapCenterUpdater({ center }) {
 		const map = useMap();
 
-		
-			if (center) {
-				map.flyTo(center, map.getZoom(), { duration: 1.5 });
-			}
-		
+
+		if (center) {
+			map.flyTo(center, map.getZoom(), { duration: 1.5 });
+		}
+
 
 		return null;
 	}
@@ -189,8 +189,8 @@ export const Home = () => {
 												<div key={incident.id}
 													onClick={() => {
 														setIsactive(incident.id)
-														setmapcenter([incident.latitud,incident.longitud])
-														
+														setmapcenter([incident.latitud, incident.longitud])
+
 													}}
 
 
@@ -204,7 +204,14 @@ export const Home = () => {
 													<div className="info">
 														<div>
 															<h4> {incident.titulo}</h4>
-															<p> Tipo de crimen:  {incident.type}  </p>
+															<p>
+																Tipo de crimen: {
+																	incident.type === "automovilistico" ? "Automovilístico" :
+																		incident.type === "ciclista" ? "Ciclista" :
+																			incident.type === "peaton" ? "Peatón" :
+																				incident.type
+																}
+															</p>
 															<p> {incident.description}</p>
 															<p>Reportado por:  <strong> {incident.username || "Desconocido"} </strong></p>
 
@@ -246,7 +253,7 @@ export const Home = () => {
 
 								/>
 
-								
+
 
 								{
 									incidentes.filter((marker => filterby.includes(marker.type)))
@@ -256,11 +263,11 @@ export const Home = () => {
 
 													eventHandlers={{
 														click: () => {
-															
-			                                                
+
+
 															const container = document.querySelector('.Incident-cards'); // your scrollable parent
 															const target = document.querySelector(`.incident-${marker.id}`);
-															setmapcenter([marker.latitud,marker.longitud])
+															setmapcenter([marker.latitud, marker.longitud])
 
 															if (container && target) {
 																const containerTop = container.getBoundingClientRect().top;
@@ -282,7 +289,7 @@ export const Home = () => {
 										})
 								}
 
-                             <MapCenterUpdater center={mapcenter} />
+								<MapCenterUpdater center={mapcenter} />
 							</MapContainer>
 						</div>
 
@@ -300,9 +307,9 @@ export const Home = () => {
 				<div className="Card_Center pt-5 pb-5">
 
 					<div className="text-center">
-						<p className="SubTitle_Cards">Marcá el peligro. Protegé a otros.</p>
+						<p className="SubTitle_Cards">Marca el peligro. Protegé a otros.</p>
 
-						<h1 className="Title_Cards">la seguridad es calidad de vida</h1>
+						<h1 className="Title_Cards">La seguridad es calidad de vida</h1>
 						<br />
 
 
@@ -314,8 +321,8 @@ export const Home = () => {
 							<div class="col  ">
 								<div className="card-section ">
 									<div className="card-bodycenter">
-										<h3 className="card-titlebody">Robos Armados, una Amenaza Persistente</h3>
-										<p className="card-titlebody"> aproximadamente el 70% de los homicidios en la región de latinoamerica fueron perpetrados con armas de fuego en 2021, en comparación con el 47% a nivel mundial</p>
+										<h3 className="card-titlebody">Robos armados, una amenaza persistente</h3>
+										<p className="card-titlebody"> Aproximadamente el 70% de los homicidios en la región de latinoamerica fueron perpetrados con armas de fuego en 2021, en comparación con el 47% a nivel mundial.</p>
 									</div>
 
 
@@ -332,7 +339,7 @@ export const Home = () => {
 								<div className="card-section ">
 									<div className="card-bodycenter">
 										<h3 className="card-titlebody">Cuidado con el trafico</h3>
-										<p className="card-titlebody">En latino america se registran aproximadamente 110,000 muertes y más de 5 millones de lesiones anualmente debido a accidentes viales</p>
+										<p className="card-titlebody">En Latinoamérica se registran aproximadamente 110,000 muertes y más de 5 millones de lesiones anualmente debido a accidentes viales.</p>
 									</div>
 
 								</div>
@@ -345,7 +352,7 @@ export const Home = () => {
 							<div class="col">
 								<div className="card-section ">
 									<div className="card-bodycenter">
-										<h3 className="card-titlebody">Recuerda Tu eres esencial en nuestra lucha por un mejor futuro en futuro más seguro</h3>
+										<h3 className="card-titlebody">Recuerda: tú eres esencial en nuestra lucha por un mejor futuro, un futuro más seguro.</h3>
 									</div>
 
 
@@ -370,7 +377,7 @@ export const Home = () => {
 						<div class="col-7 numbertext-container">
 							<div className="subnumbertext-container">
 
-								<h1> Un Segundo Puede Salvar una Vida: El Poder de Marcar un Número</h1>
+								<h1> Un SEGUNDO puede salvar una VIDA: el poder de marcar un número.</h1>
 								<br />
 								<h4> NUMERO DE EMERGENCIA: 911</h4>
 								<br />
