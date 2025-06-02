@@ -111,7 +111,7 @@ export const Moderador = () => {
                                 <ul>
                                     {incident.reports.map((report) => (
                                         <li key={report.id}>
-                                            <p><strong>Usuario que reporto:</strong> {report.username}</p>
+                                            <p><strong>Usuario que reporto:</strong> {report.user}</p>
                                             <p><strong>Motivo:</strong> {report.type}</p>
                                             <p><strong>Descripción:</strong> {report.description}</p>
                                         </li>
