@@ -93,7 +93,7 @@ function IncidentCard() {
 						<h4> {incident.titulo}</h4>
 						<p>Tipo de crimen: {incident.type}</p>
 						<p> Descripción: {incident.description}</p>
-						<p>Usuario: {incident.user || "Desconocido"}</p>
+						<p>Usuario: {incident.username}</p>
 						<div className="incident-stats">
 							<p><i className="fa-solid fa-check"></i> Likes: {incident.num_likes}</p>
 							<p><i className="fa-regular fa-flag"></i> Reportes: {incident.num_reports}</p>
