@@ -64,7 +64,9 @@ export const Navbar = () => {
         <nav className="navbar">
             {/* Icono Logo GuardianUrbano */}
             <div className="navbar-logo">
-                <img src="/public/Logo-GuardianUrbano.png" alt="Logo" />
+                
+                <img src="/public/Logo-GuardianUrbano.png" alt="Logo"  className="ms-5 me-2"/>
+                <h1>GuardianUrbano</h1>
             </div>
 
             <div className="navbar-links">

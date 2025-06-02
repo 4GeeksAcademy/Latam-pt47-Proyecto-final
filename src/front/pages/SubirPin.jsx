@@ -283,7 +283,7 @@ export const SubirPin = () => {
                             setTipo("ciclista")
                         }}>
                             <i class="fa-solid fa-bicycle simbol"></i>
-                            Ciclistico
+                             Ciclista/Moto
 
                         </button>
 
