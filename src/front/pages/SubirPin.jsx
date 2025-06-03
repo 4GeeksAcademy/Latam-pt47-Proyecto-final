@@ -30,7 +30,7 @@ export const SubirPin = () => {
     const [userdata, setUserdata] = useState(null)
 
     const customIcon = new L.Icon({
-        iconUrl: {logo},
+        iconUrl: "https://res.cloudinary.com/daby6jdf1/image/upload/v1748802567/Logo-GuardianUrbano_1_kj1bnl.png",
         iconSize: new L.Point(28, 38),
         iconAnchor: [10, 35]
     })
