@@ -64,7 +64,7 @@ const ReportModal = ({ isOpen, onClose, incident, token, backendUrl, setIncident
 
         <div className="modal-overlay" onClick={handleClose}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                <img src={incident.image ?? "public/Logo-GuardianUrbano.png"}
+                <img src={incident.image ?? "src/assets/Logo-GuardianUrbano.png"}
                     className="modal-image"
                     alt="Incidente"
                 />

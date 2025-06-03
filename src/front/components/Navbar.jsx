@@ -65,7 +65,7 @@ export const Navbar = () => {
             {/* Icono Logo GuardianUrbano */}
             <div className="navbar-logo">
                 
-                <img src="/public/Logo-GuardianUrbano.png" alt="Logo"  className="ms-5 me-2"/>
+                <img src="src/assets/Logo-GuardianUrbano.png" alt="Logo"  className="ms-5 me-2"/>
                 <h1>GuardianUrbano</h1>
             </div>
 

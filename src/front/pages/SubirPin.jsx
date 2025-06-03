@@ -29,7 +29,7 @@ export const SubirPin = () => {
     const [userdata, setUserdata] = useState(null)
 
     const customIcon = new L.Icon({
-        iconUrl: "public/Logo-GuardianUrbano.png",
+        iconUrl: "src/assets/Logo-GuardianUrbano.png",
         iconSize: new L.Point(28, 38),
         iconAnchor: [10, 35]
     })
