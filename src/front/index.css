@@ -709,7 +709,7 @@ button {
 .marker-image {
   width: 37px;
   height: 47px;
-  background-image: url('/Logo-GuardianUrbano.png');
+  background-image: url('https://res.cloudinary.com/daby6jdf1/image/upload/v1748802567/Logo-GuardianUrbano_1_kj1bnl.png');
   background-size: contain;
   background-repeat: no-repeat;
   transition: transform 0.2s ease;
