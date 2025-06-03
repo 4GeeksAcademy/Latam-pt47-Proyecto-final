@@ -12,6 +12,7 @@ import { Icon } from "leaflet"
 import 'leaflet/dist/leaflet.css';
 import { jwtDecode } from "jwt-decode";
 import { showSuccessAlert, showErrorAlert, showWarningAlert } from "../../utils/alerts";
+import logo from "../assets/Logo-GuardianUrbano.png";
 
 
 
@@ -29,7 +30,7 @@ export const SubirPin = () => {
     const [userdata, setUserdata] = useState(null)
 
     const customIcon = new L.Icon({
-        iconUrl: "../assets/Logo-GuardianUrbano.png",
+        iconUrl: {logo},
         iconSize: new L.Point(28, 38),
         iconAnchor: [10, 35]
     })
