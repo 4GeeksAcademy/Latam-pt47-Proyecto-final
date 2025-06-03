@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import Select from "react-select";
 import { showSuccessAlert, showErrorAlert, showWarningAlert } from "../../utils/alerts";
+import logo from "../assets/Logo-GuardianUrbano.png";
+
 
 const ReportModal = ({ isOpen, onClose, incident, token, backendUrl, setIncidentes }) => {
     const [reportType, setReportType] = useState("");
@@ -64,7 +66,7 @@ const ReportModal = ({ isOpen, onClose, incident, token, backendUrl, setIncident
 
         <div className="modal-overlay" onClick={handleClose}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                <img src={incident.image ?? "src/assets/Logo-GuardianUrbano.png"}
+                <img src={incident.image ?? logo}
                     className="modal-image"
                     alt="Incidente"
                 />

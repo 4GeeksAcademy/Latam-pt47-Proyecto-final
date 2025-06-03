@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { showSuccessAlert, showErrorAlert, showWarningAlert } from "../../utils/alerts";
+import logo from "../assets/Logo-GuardianUrbano.png";
+
 
 export const Moderador = () => {
     const [reportes, setReportes] = useState([]);
@@ -90,7 +92,7 @@ export const Moderador = () => {
                     <div key={incident.id} className="incidente-box">
                         <div className="incidente-info">
                             <h3>{incident.titulo}</h3>
-                            <img src={incident.image ? incident.image : "src/assets/Logo-GuardianUrbano.png"}
+                            <img src={incident.image ? incident.image : {logo}}
                                 className="card-img-top"
                                 alt="Reporte"
                             />
