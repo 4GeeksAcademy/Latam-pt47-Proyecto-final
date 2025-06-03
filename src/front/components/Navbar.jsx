@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import logo from "../../assets/Logo-GuardianUrbano.png";
 
 
 export const Navbar = () => {
@@ -7,7 +8,7 @@ export const Navbar = () => {
     const location = useLocation();
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
-   
+
 
 
 
@@ -15,7 +16,7 @@ export const Navbar = () => {
     useEffect(() => {
         const checkAuthStatus = () => {
             const token = sessionStorage.getItem("token");
-            
+
 
             setIsAuthenticated(!!token);
 
@@ -64,8 +65,8 @@ export const Navbar = () => {
         <nav className="navbar">
             {/* Icono Logo GuardianUrbano */}
             <div className="navbar-logo">
-                
-                <img src="src/assets/Logo-GuardianUrbano.png" alt="Logo"  className="ms-5 me-2"/>
+
+                <img src={logo} alt="Logo" className="ms-5 me-2" />
                 <h1>GuardianUrbano</h1>
             </div>
 
@@ -90,7 +91,7 @@ export const Navbar = () => {
                             Cerrar Sesión
                         </button>
 
-                      
+
 
 
 
